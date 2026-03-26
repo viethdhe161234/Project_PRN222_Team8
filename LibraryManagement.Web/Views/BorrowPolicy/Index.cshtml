@@ -1,0 +1,53 @@
+﻿@model LibraryManagement.Web.Models.BorrowPolicyViewModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Borrow Policy";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="card" style="max-width: 500px;">
+    <div class="card-header">Borrow Policy Settings</div>
+    <div class="card-body">
+        <form asp-action="Index" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="MaxBooksPerRequest" class="form-label">
+                    Max Books Per Request
+                </label>
+                <input asp-for="MaxBooksPerRequest" type="number" class="form-control" />
+                <span asp-validation-for="MaxBooksPerRequest" class="text-danger"></span>
+                <small class="text-muted">Maximum number of books a user can request at once</small>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="MaxDaysBorrow" class="form-label">
+                    Max Borrow Days
+                </label>
+                <input asp-for="MaxDaysBorrow" type="number" class="form-control" />
+                <span asp-validation-for="MaxDaysBorrow" class="text-danger"></span>
+                <small class="text-muted">Maximum number of days a book can be borrowed</small>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="MaxActiveLoan" class="form-label">
+                    Max Active Loans
+                </label>
+                <input asp-for="MaxActiveLoan" type="number" class="form-control" />
+                <span asp-validation-for="MaxActiveLoan" class="text-danger"></span>
+                <small class="text-muted">Maximum number of active loans a user can have</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

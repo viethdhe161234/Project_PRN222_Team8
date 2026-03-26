@@ -1,0 +1,66 @@
+﻿@model IEnumerable<LibraryManagement.Domain.Entities.BorrowRequest>
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "My Requests";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<h4 class="mb-3">My Borrow Requests</h4>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No requests yet. <a asp-controller="Home" asp-action="Books">Browse books</a>
+    </div>
+}
+else
+{
+    foreach (var request in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between">
+                <span>Request #@request.Id — @request.RequestDate.ToString("dd/MM/yyyy")</span>
+                <span class="badge @(request.Status == "Pending" ? "bg-warning text-dark" :
+                                    request.Status == "Approved" ? "bg-success" : "bg-danger")">
+                    @request.Status
+                </span>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Book</th>
+                            <th>Edition</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in request.Items)
+                        {
+                            <tr>
+                                <td>@item.BookEdition.Book.Title</td>
+                                <td>@item.BookEdition.Publisher — @item.BookEdition.PublishYear</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @if (request.Status == "Rejected" && !string.IsNullOrEmpty(request.RejectionReason))
+            {
+                <div class="card-footer bg-danger bg-opacity-10">
+                    <small class="text-danger">
+                        ❌ <strong>Rejected reason:</strong> @request.RejectionReason
+                    </small>
+                </div>
+            }
+        </div>
+    }
+}

@@ -1,0 +1,94 @@
+﻿@model LibraryManagement.Web.Models.CartViewModel
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "My Cart";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">My Cart</h4>
+    <small class="text-muted">
+        @Model.Items.Count / @Model.MaxBooksPerRequest books
+    </small>
+</div>
+
+@if (!Model.Items.Any())
+{
+    <div class="alert alert-info">
+        Your cart is empty.
+        <a asp-controller="Home" asp-action="Books">Browse books</a>
+    </div>
+}
+else
+{
+    <div class="card mb-3">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Cover</th>
+                        <th>Title</th>
+                        <th>Edition</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.CoverImage))
+                                {
+                                    <img src="@item.CoverImage" alt="cover"
+                                         style="width:40px; height:55px; object-fit:cover;" />
+                                }
+                                else
+                                {
+                                    <div style="width:40px; height:55px; background:#e5e7eb;
+                                                display:flex; align-items:center;
+                                                justify-content:center; font-size:10px; color:#9ca3af;">
+                                        No img
+                                    </div>
+                                }
+                            </td>
+                            <td>@item.BookTitle</td>
+                            <td>@item.Publisher — @item.PublishYear</td>
+                            <td>
+                                <form asp-action="Remove" method="post" class="d-inline">
+                                    <input type="hidden" name="editionId" value="@item.EditionId" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        Remove
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2 justify-content-end">
+        <form asp-action="Clear" method="post">
+            <button type="submit" class="btn btn-outline-secondary"
+                    onclick="return confirm('Clear cart?')">
+                Clear Cart
+            </button>
+        </form>
+        <form asp-controller="BorrowRequest" asp-action="Checkout" method="post">
+            <button type="submit" class="btn btn-primary"
+                    onclick="return confirm('Submit borrow request?')">
+                📋 Submit Borrow Request
+            </button>
+        </form>
+    </div>
+}

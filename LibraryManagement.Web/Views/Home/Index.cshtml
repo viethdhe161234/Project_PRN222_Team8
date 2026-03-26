@@ -1,0 +1,50 @@
+﻿@model IEnumerable<LibraryManagement.Domain.Entities.Book>
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Home";
+}
+
+<!-- Hero -->
+<div class="p-5 mb-4 bg-dark text-white rounded-3">
+    <div class="container-fluid py-3">
+        <h1 class="display-5 fw-bold">📚 Welcome to Library</h1>
+        <p class="col-md-8 fs-4">Browse our collection and borrow books online.</p>
+        <a asp-action="Books" class="btn btn-primary btn-lg">Browse Books</a>
+    </div>
+</div>
+
+<!-- Featured Books -->
+<h4 class="mb-3">Featured Books</h4>
+<div class="row row-cols-2 row-cols-md-4 g-4">
+    @foreach (var book in Model)
+    {
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                @if (!string.IsNullOrEmpty(book.CoverImage))
+                {
+                    <img src="@book.CoverImage" class="card-img-top"
+                         style="height:200px; object-fit:cover;" alt="@book.Title" />
+                }
+                else
+                {
+                    <div style="height:200px; background:#e5e7eb;
+                                display:flex; align-items:center;
+                                justify-content:center; color:#9ca3af;">
+                        No image
+                    </div>
+                }
+                <div class="card-body">
+                    <h6 class="card-title">@book.Title</h6>
+                    <p class="card-text text-muted small">
+                        @string.Join(", ", book.BookAuthors.Select(ba => ba.Author.Name))
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <a asp-action="BookDetail" asp-route-id="@book.Id"
+                       class="btn btn-sm btn-outline-primary w-100">View Detail</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

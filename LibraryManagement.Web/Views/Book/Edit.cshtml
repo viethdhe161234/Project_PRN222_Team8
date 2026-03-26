@@ -1,0 +1,70 @@
+﻿@model LibraryManagement.Web.Models.BookViewModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Edit Book";
+}
+@if (TempData["Debug"] != null)
+{
+    <div class="alert alert-info">@TempData["Debug"]</div>
+}
+<div class="card" style="max-width: 700px;">
+    <div class="card-header">Edit Book</div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <input asp-for="Id" type="hidden" />
+            <input asp-for="CoverImage" type="hidden" />
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Cover Image</label>
+                @if (!string.IsNullOrEmpty(Model.CoverImage))
+                {
+                    <div class="mb-2">
+                        <img src="@Model.CoverImage" alt="Current cover"
+                             style="width:80px; height:110px; object-fit:cover;" />
+                        <small class="text-muted d-block">Current cover</small>
+                    </div>
+                }
+                <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+                <small class="text-muted">Leave empty to keep current image</small>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Authors</label>
+                <select asp-for="SelectedAuthorIds" asp-items="Model.Authors"
+                        class="form-select" multiple size="5">
+                </select>
+                <small class="text-muted">Hold Ctrl to select multiple</small>
+                <span asp-validation-for="SelectedAuthorIds" class="text-danger d-block"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Categories</label>
+                <select asp-for="SelectedCategoryIds" asp-items="Model.Categories"
+                        class="form-select" multiple size="5">
+                </select>
+                <small class="text-muted">Hold Ctrl to select multiple</small>
+                <span asp-validation-for="SelectedCategoryIds" class="text-danger d-block"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

@@ -1,0 +1,80 @@
+﻿@model LibraryManagement.Web.Models.AuthorViewModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Add Author";
+}
+
+<div class="d-flex justify-content-between align-items-end mb-4">
+    <div>
+        <nav class="d-flex gap-2 text-uppercase text-muted fw-bold mb-2" style="font-size: 0.75rem; letter-spacing: 0.1em;">
+            <span>Curation</span>
+            <span class="text-secondary">/</span>
+            <a asp-action="Index" class="text-decoration-none text-muted hover-primary">Authors</a>
+            <span class="text-secondary">/</span>
+            <span class="text-primary">New</span>
+        </nav>
+        <h2 class="fw-bolder mb-0 text-dark" style="font-size: 2.25rem; font-family: 'Manrope', sans-serif;">Add Author</h2>
+    </div>
+    <a asp-action="Index" class="btn btn-light px-4 py-2 fw-semibold rounded-3 d-flex align-items-center gap-2 border shadow-sm">
+        <span class="material-symbols-outlined fs-5">arrow_back</span>
+        Back to Catalog
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-12 col-xl-6 col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4" style="background-color: #fcfcff;">
+            <div class="card-body p-4 p-md-5">
+
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px; background-color: #e2dfff; color: #3525cd;">
+                        <span class="material-symbols-outlined fs-3">person_add</span>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-1 text-dark" style="font-family: 'Manrope', sans-serif;">Author Profile</h4>
+                        <p class="text-muted small mb-0">Enter the official details of the new author.</p>
+                    </div>
+                </div>
+
+                <form asp-action="Create" method="post">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger d-flex align-items-center gap-3 border-0 border-start border-4 border-danger py-3 shadow-sm rounded-end-3" role="alert" style="background-color: #ffdad6; color: #93000a;">
+                            <span class="material-symbols-outlined fs-4 text-danger">error</span>
+                            <div asp-validation-summary="ModelOnly" class="fw-medium mb-0"></div>
+                        </div>
+                    }
+
+                    <div class="mb-4">
+                        <label asp-for="Name" class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;">
+                            Author Name <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="Name" class="form-control form-control-lg rounded-3 border-light-subtle shadow-none"
+                               placeholder="e.g. Ernest Hemingway"
+                               style="background-color: #faf8ff; font-size: 1rem; transition: all 0.2s;"
+                               onfocus="this.style.borderColor='#3525cd'; this.style.backgroundColor='#ffffff'; this.style.boxShadow='0 0 0 0.25rem rgba(53, 37, 205, 0.15)';"
+                               onblur="this.style.borderColor='var(--bs-border-color-translucent)'; this.style.backgroundColor='#faf8ff'; this.style.boxShadow='none';" />
+                        <span asp-validation-for="Name" class="text-danger small mt-2 d-block fw-medium"></span>
+                    </div>
+
+                    <hr class="my-4" style="border-color: #e2dfff;" />
+
+                    <div class="d-flex gap-3 justify-content-end">
+                        <a asp-action="Index" class="btn btn-light px-4 py-2 fw-semibold rounded-3 d-flex align-items-center gap-2 border">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold rounded-3 d-flex align-items-center gap-2" style="background-color: #3525cd; border-color: #3525cd;">
+                            <span class="material-symbols-outlined fs-5">save</span>
+                            Save Author
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

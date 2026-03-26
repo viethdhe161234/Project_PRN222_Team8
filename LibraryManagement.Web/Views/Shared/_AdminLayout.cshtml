@@ -1,0 +1,273 @@
+﻿@using Microsoft.AspNetCore.Http
+@{
+    var username = Context.Session.GetString("Username") ?? "Administrator";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - The Atelier</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <style>
+        /* Typography & Base Colors */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #faf8ff;
+            color: #131b2e;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5, h6, .font-headline {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+            font-size: 1.25rem;
+        }
+
+        /* --- Sidebar Styling --- */
+        .sidebar {
+            min-height: 100vh;
+            width: 260px;
+            background-color: #0f172a; /* Slate 900 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+        }
+
+        .sidebar-brand-container {
+            padding: 1.5rem 1.25rem 2rem;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            background-color: #4f46e5; /* Indigo 600 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .brand-text h1 {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -0.025em;
+        }
+
+        .brand-text p {
+            color: #94a3b8;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin: 0;
+        }
+
+        /* Nav Links */
+        .sidebar .nav-link {
+            color: #94a3b8;
+            padding: 0.75rem 1rem;
+            margin: 0.25rem 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+            .sidebar .nav-link:hover {
+                color: white;
+                background-color: #1e293b;
+                transform: translateX(4px);
+            }
+
+            /* Active State */
+            .sidebar .nav-link.active {
+                color: white;
+                background-color: #4f46e5;
+                box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+                transform: none;
+            }
+
+        .sidebar .nav-section {
+            color: #64748b;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 1.5rem 1.5rem 0.5rem;
+        }
+
+        /* --- Main Content & Topbar --- */
+        .main-content {
+            margin-left: 260px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            height: 64px;
+        }
+
+        .search-container input {
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 50rem;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            font-size: 0.875rem;
+            width: 250px;
+            transition: all 0.2s;
+        }
+
+            .search-container input:focus {
+                box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+                outline: none;
+            }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #adb5bd;
+            font-size: 1.1rem;
+        }
+
+        .content-area {
+            padding: 2.5rem;
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-brand-container">
+            <a class="sidebar-brand" asp-controller="Admin" asp-action="Dashboard">
+                <div class="brand-icon">
+                    <span class="material-symbols-outlined">menu_book</span>
+                </div>
+                <div class="brand-text">
+                    <h1>The Atelier</h1>
+                    <p>Admin Panel</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="flex-grow-1 overflow-auto">
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Admin" ? "active" : "")" asp-controller="Admin" asp-action="Dashboard">
+                <span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+
+            <div class="nav-section">Members</div>
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Account" ? "active" : "")" asp-controller="Account" asp-action="Index">
+                <span class="material-symbols-outlined">manage_accounts</span>
+                Accounts
+            </a>
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Member" ? "active" : "")" asp-controller="Member" asp-action="Index">
+                <span class="material-symbols-outlined">badge</span>
+                Member Info
+            </a>
+
+            <div class="nav-section">Library</div>
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Book" ? "active" : "")" asp-controller="Book" asp-action="Index">
+                <span class="material-symbols-outlined">library_books</span>
+                Books
+            </a>
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Author" ? "active" : "")" asp-controller="Author" asp-action="Index">
+                <span class="material-symbols-outlined">history_edu</span>
+                Authors
+            </a>
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Category" ? "active" : "")" asp-controller="Category" asp-action="Index">
+                <span class="material-symbols-outlined">style</span>
+                Categories
+            </a>
+
+            <div class="nav-section">Settings</div>
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "BorrowPolicy" ? "active" : "")" asp-controller="BorrowPolicy" asp-action="Index">
+                <span class="material-symbols-outlined">rule_settings</span>
+                Borrow Policy
+            </a>
+        </div>
+
+        <div class="p-3 mt-auto border-top" style="border-color: #1e293b !important;">
+            <a class="nav-link text-danger d-flex align-items-center gap-2 m-0" asp-controller="Account" asp-action="Logout" style="padding: 0.75rem; border-radius: 0.5rem;">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="fw-medium">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div class="d-flex align-items-center gap-3">
+                <div class="position-relative search-container">
+                    <span class="material-symbols-outlined search-icon">search</span>
+                    <input type="text" placeholder="Search archives..." />
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-4">
+                <span class="material-symbols-outlined text-secondary hover:text-primary" style="cursor: pointer;">notifications</span>
+
+                <div class="d-flex align-items-center gap-2">
+                    <div class="text-end d-none d-md-block">
+                        <p class="mb-0 fw-bold text-dark fs-6" style="line-height: 1;">@username</p>
+                        <small class="text-muted" style="font-size: 0.7rem;">Administrator</small>
+                    </div>
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 36px; height: 36px; font-weight: bold;">
+                        @(username.Substring(0, 1).ToUpper())
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            @RenderBody()
+        </div>
+
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

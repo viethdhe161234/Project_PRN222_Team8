@@ -1,0 +1,356 @@
+﻿@model LibraryManagement.Web.Models.DashboardViewModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Dashboard";
+    var copyUsedPct = Model.TotalCopies > 0
+        ? (int)((Model.TotalCopies - Model.AvailableCopies) * 100.0 / Model.TotalCopies)
+        : 0;
+}
+
+<style>
+    .stat-card {
+        border: none;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+    .stat-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .stat-value {
+        font-family: 'Manrope', sans-serif;
+        font-size: 1.75rem;
+        font-weight: 800;
+        line-height: 1;
+        color: #131b2e;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin-top: 0.25rem;
+    }
+
+    .section-title {
+        font-family: 'Manrope', sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #131b2e;
+    }
+
+    .top-book-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+        .top-book-row:last-child {
+            border-bottom: none;
+        }
+
+    .book-rank {
+        font-family: 'Manrope', sans-serif;
+        font-weight: 800;
+        font-size: 1.1rem;
+        color: #cbd5e1;
+        width: 24px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    .rank-1 {
+        color: #f59e0b;
+    }
+
+    .rank-2 {
+        color: #94a3b8;
+    }
+
+    .rank-3 {
+        color: #b45309;
+    }
+
+    .book-cover-sm {
+        width: 36px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 4px;
+        flex-shrink: 0;
+        background: #e2e8f0;
+    }
+
+    .borrow-bar-bg {
+        height: 6px;
+        background: #f1f5f9;
+        border-radius: 3px;
+        margin-top: 4px;
+    }
+
+    .borrow-bar-fill {
+        height: 6px;
+        border-radius: 3px;
+        background: linear-gradient(90deg, #4f46e5, #818cf8);
+    }
+
+    .usage-bar-bg {
+        height: 10px;
+        background: #f1f5f9;
+        border-radius: 5px;
+    }
+
+    .usage-bar-fill {
+        height: 10px;
+        border-radius: 5px;
+        transition: width 0.6s ease;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.82rem;
+        margin-bottom: 0.4rem;
+    }
+</style>
+
+<div class="mb-4">
+    <h4 class="fw-bold mb-0" style="font-family:'Manrope',sans-serif;">System Overview</h4>
+    <small class="text-muted">Library-wide statistics and catalog health</small>
+</div>
+
+<!-- Row 1: Catalog stats -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card bg-white shadow-sm">
+            <div class="stat-icon" style="background:#ede9fe;">
+                <span class="material-symbols-outlined" style="color:#7c3aed;">library_books</span>
+            </div>
+            <div>
+                <div class="stat-value">@Model.TotalBooks</div>
+                <div class="stat-label">Total Books</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card bg-white shadow-sm">
+            <div class="stat-icon" style="background:#dbeafe;">
+                <span class="material-symbols-outlined" style="color:#1d4ed8;">collections_bookmark</span>
+            </div>
+            <div>
+                <div class="stat-value">@Model.TotalEditions</div>
+                <div class="stat-label">Editions</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card bg-white shadow-sm">
+            <div class="stat-icon" style="background:#dcfce7;">
+                <span class="material-symbols-outlined" style="color:#15803d;">group</span>
+            </div>
+            <div>
+                <div class="stat-value">@Model.TotalMembers</div>
+                <div class="stat-label">Members</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card bg-white shadow-sm">
+            <div class="stat-icon" style="background:#fef3c7;">
+                <span class="material-symbols-outlined" style="color:#b45309;">verified_user</span>
+            </div>
+            <div>
+                <div class="stat-value">@Model.ActiveAccounts</div>
+                <div class="stat-label">Active Accounts</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Row 2: Loan health -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card bg-white shadow-sm">
+            <div class="stat-icon" style="background:#fef3c7;">
+                <span class="material-symbols-outlined" style="color:#d97706;">pending</span>
+            </div>
+            <div>
+                <div class="stat-value">@Model.PendingRequests</div>
+                <div class="stat-label">Pending Requests</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card bg-white shadow-sm">
+            <div class="stat-icon" style="background:#dbeafe;">
+                <span class="material-symbols-outlined" style="color:#2563eb;">menu_book</span>
+            </div>
+            <div>
+                <div class="stat-value">@Model.ActiveLoans</div>
+                <div class="stat-label">Active Loans</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card bg-white shadow-sm @(Model.OverdueLoans > 0 ? "" : "")">
+            <div class="stat-icon" style="background:#fee2e2;">
+                <span class="material-symbols-outlined" style="color:#dc2626;">warning</span>
+            </div>
+            <div>
+                <div class="stat-value" style="@(Model.OverdueLoans > 0 ? "color:#dc2626;" : "")">
+                    @Model.OverdueLoans
+                </div>
+                <div class="stat-label">Overdue Loans</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card bg-white shadow-sm">
+            <div class="stat-icon" style="background:#dcfce7;">
+                <span class="material-symbols-outlined" style="color:#16a34a;">content_copy</span>
+            </div>
+            <div>
+                <div class="stat-value">
+                    @Model.AvailableCopies
+                    <span style="font-size:1rem;color:#94a3b8;">/ @Model.TotalCopies</span>
+                </div>
+                <div class="stat-label">Available Copies</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Row 3: Top books + Copy usage + Catalog breakdown -->
+<div class="row g-3">
+
+    <!-- Top borrowed books -->
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:1rem;">
+            <div class="card-body">
+                <div class="section-title mb-3">Top Borrowed Books</div>
+                @if (!Model.TopBorrowedBooks.Any())
+                {
+                    <p class="text-muted small">No loan data yet.</p>
+                }
+                else
+                {
+                    var maxCount = Model.TopBorrowedBooks.First().BorrowCount;
+                    var rank = 1;
+                    foreach (var book in Model.TopBorrowedBooks)
+                    {
+                        var pct = maxCount > 0 ? (book.BorrowCount * 100 / maxCount) : 0;
+                        <div class="top-book-row">
+                            <div class="book-rank rank-@rank">@rank</div>
+                            @if (!string.IsNullOrEmpty(book.CoverImage))
+                            {
+                                <img src="@book.CoverImage" class="book-cover-sm" alt="cover" />
+                            }
+                            else
+                            {
+                                <div class="book-cover-sm d-flex align-items-center justify-content-center">
+                                    <span class="material-symbols-outlined text-muted" style="font-size:1rem;">book</span>
+                                </div>
+                            }
+                            <div class="flex-grow-1 min-w-0">
+                                <div class="fw-semibold text-truncate" style="font-size:0.875rem;">@book.Title</div>
+                                <div class="borrow-bar-bg">
+                                    <div class="borrow-bar-fill" style="width:@pct%"></div>
+                                </div>
+                            </div>
+                            <div style="font-size:0.8rem;font-weight:700;color:#4f46e5;flex-shrink:0;">
+                                @book.BorrowCount×
+                            </div>
+                        </div>
+                        rank++;
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Catalog health + Copy usage -->
+    <div class="col-lg-7">
+        <div class="row g-3 h-100">
+
+            <!-- Copy utilization -->
+            <div class="col-12">
+                <div class="card border-0 shadow-sm" style="border-radius:1rem;">
+                    <div class="card-body">
+                        <div class="section-title mb-3">Copy Utilization</div>
+                        <div class="d-flex justify-content-between mb-1" style="font-size:0.82rem;">
+                            <span class="text-muted">In use</span>
+                            <span class="fw-semibold">@(Model.TotalCopies - Model.AvailableCopies) / @Model.TotalCopies copies (@copyUsedPct%)</span>
+                        </div>
+                        <div class="usage-bar-bg mb-3">
+                            <div class="usage-bar-fill" style="width:@copyUsedPct%;background:@(copyUsedPct > 80 ? "#dc2626" : copyUsedPct > 50 ? "#d97706" : "#4f46e5");"></div>
+                        </div>
+                        <div class="row g-2 text-center">
+                            <div class="col-4">
+                                <div style="font-size:1.25rem;font-weight:800;font-family:'Manrope',sans-serif;color:#4f46e5;">@Model.TotalCopies</div>
+                                <div style="font-size:0.72rem;color:#64748b;">Total copies</div>
+                            </div>
+                            <div class="col-4">
+                                <div style="font-size:1.25rem;font-weight:800;font-family:'Manrope',sans-serif;color:#16a34a;">@Model.AvailableCopies</div>
+                                <div style="font-size:0.72rem;color:#64748b;">Available</div>
+                            </div>
+                            <div class="col-4">
+                                <div style="font-size:1.25rem;font-weight:800;font-family:'Manrope',sans-serif;color:#d97706;">@(Model.TotalCopies - Model.AvailableCopies)</div>
+                                <div style="font-size:0.72rem;color:#64748b;">Borrowed out</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick nav to management areas -->
+            <div class="col-12">
+                <div class="card border-0 shadow-sm" style="border-radius:1rem;">
+                    <div class="card-body">
+                        <div class="section-title mb-3">Manage</div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a asp-controller="Book" asp-action="Index"
+                               class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1">
+                                <span class="material-symbols-outlined" style="font-size:1rem;">library_books</span>Books
+                            </a>
+                            <a asp-controller="Author" asp-action="Index"
+                               class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1">
+                                <span class="material-symbols-outlined" style="font-size:1rem;">history_edu</span>Authors
+                            </a>
+                            <a asp-controller="Category" asp-action="Index"
+                               class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1">
+                                <span class="material-symbols-outlined" style="font-size:1rem;">style</span>Categories
+                            </a>
+                            <a asp-controller="Account" asp-action="Index"
+                               class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1">
+                                <span class="material-symbols-outlined" style="font-size:1rem;">manage_accounts</span>Accounts
+                            </a>
+                            <a asp-controller="BorrowPolicy" asp-action="Index"
+                               class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1">
+                                <span class="material-symbols-outlined" style="font-size:1rem;">rule_settings</span>Policy
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

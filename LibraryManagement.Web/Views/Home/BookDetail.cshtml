@@ -1,0 +1,93 @@
+﻿@model LibraryManagement.Domain.Entities.Book
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="row">
+    <!-- Cover -->
+    <div class="col-md-3">
+        @if (!string.IsNullOrEmpty(Model.CoverImage))
+        {
+            <img src="@Model.CoverImage" class="img-fluid rounded shadow" alt="@Model.Title" />
+        }
+        else
+        {
+            <div style="height:300px; background:#e5e7eb;
+                        display:flex; align-items:center;
+                        justify-content:center; color:#9ca3af;">
+                No image
+            </div>
+        }
+    </div>
+
+    <!-- Info -->
+    <div class="col-md-9">
+        <h3>@Model.Title</h3>
+        <p class="text-muted">
+            <strong>Authors:</strong>
+            @string.Join(", ", Model.BookAuthors.Select(ba => ba.Author.Name))
+        </p>
+        <p>
+            @foreach (var bc in Model.BookCategories)
+            {
+                <span class="badge bg-secondary me-1">@bc.Category.Name</span>
+            }
+        </p>
+        <p>@Model.Description</p>
+
+        <hr />
+
+        <!-- Editions -->
+        <h5>Available Editions</h5>
+        @if (!Model.Editions.Any())
+        {
+            <p class="text-muted">No editions available.</p>
+        }
+        else
+        {
+            <div class="row g-3">
+                @foreach (var edition in Model.Editions)
+                {
+                    var availableCopies = edition.Copies.Count(c => c.IsAvailable);
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>@edition.Publisher — @edition.PublishYear</h6>
+                                <p class="text-muted small mb-2">
+                                    Available: @availableCopies / @edition.Copies.Count()
+                                </p>
+                                @if (availableCopies > 0)
+                                {
+                                    @if (Context.Session.GetString("Username") != null)
+                                    {
+                                        <form asp-controller="Cart" asp-action="Add" method="post">
+                                            <input type="hidden" name="editionId" value="@edition.Id" />
+                                            <button type="submit" class="btn btn-primary btn-sm w-100">
+                                                + Add to Cart
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="Account" asp-action="Login"
+                                           class="btn btn-outline-primary btn-sm w-100">
+                                            Login to Borrow
+                                        </a>
+                                    }
+                                }
+                                else
+                                {
+                                    <button class="btn btn-secondary btn-sm w-100" disabled>
+                                        Not Available
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

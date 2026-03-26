@@ -1,0 +1,68 @@
+﻿@model IEnumerable<LibraryManagement.Domain.Entities.Loan>
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "My Loans";
+    var overdueLoans = Model.Where(l => l.IsOverdue).ToList();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">My Current Loans</h4>
+    <a asp-action="History" class="btn btn-sm btn-outline-secondary">View History</a>
+</div>
+
+@if (overdueLoans.Any())
+{
+    <div class="alert alert-danger">
+        ⚠️ <strong>You have @overdueLoans.Count overdue book(s)!</strong>
+        Please return them to the library as soon as possible.
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">You have no active loans at the moment.</div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var loan in Model)
+        {
+            var daysLeft = (loan.DueDate - DateTime.Now).Days;
+            var borderClass = loan.IsOverdue ? "border-danger" : daysLeft <= 3 ? "border-warning" : "border-success";
+
+            <div class="col-md-6">
+                <div class="card h-100 border-2 @borderClass">
+                    <div class="card-body">
+                        <h6 class="card-title mb-1">@loan.BookCopy?.BookEdition?.Book?.Title</h6>
+                        <p class="text-muted small mb-3">
+                            @loan.BookCopy?.BookEdition?.Publisher (@loan.BookCopy?.BookEdition?.PublishYear)
+                        </p>
+                        <div class="d-flex justify-content-between align-items-end">
+                            <div>
+                                <small class="text-muted d-block">Borrowed: @loan.BorrowDate.ToString("dd/MM/yyyy")</small>
+                                <small class="@(loan.IsOverdue ? "text-danger fw-bold" : "text-muted") d-block">
+                                    Due: @loan.DueDate.ToString("dd/MM/yyyy")
+                                </small>
+                            </div>
+                            <div>
+                                @if (loan.IsOverdue)
+                                {
+                                    <span class="badge bg-danger">Overdue @loan.OverdueDays day(s)</span>
+                                }
+                                else if (daysLeft <= 3)
+                                {
+                                    <span class="badge bg-warning text-dark">Due in @daysLeft day(s)</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">@daysLeft day(s) left</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

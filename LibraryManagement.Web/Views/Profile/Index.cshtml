@@ -1,0 +1,96 @@
+﻿@model LibraryManagement.Web.Models.ProfileViewModel
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "My Profile";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<h4 class="mb-4">My Profile</h4>
+
+<div class="row g-4">
+
+    <!-- Account Info -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Account Information</div>
+            <div class="card-body">
+                <p><strong>Username:</strong> @Model.Username</p>
+                <p><strong>Email:</strong> @Model.Email</p>
+                <small class="text-muted">Contact admin to change username or email.</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Personal Info -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Personal Information</div>
+            <div class="card-body">
+                <form asp-action="UpdateInfo" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label"></label>
+                        <input asp-for="FullName" class="form-control" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Phone" class="form-label"></label>
+                        <input asp-for="Phone" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label"></label>
+                        <input asp-for="Address" class="form-control" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Change Password</div>
+            <div class="card-body">
+                <form asp-action="ChangePassword" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Current Password</label>
+                        <input name="CurrentPassword" type="password" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">New Password</label>
+                        <input name="NewPassword" type="password" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Confirm New Password</label>
+                        <input name="ConfirmNewPassword" type="password" class="form-control" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Change Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

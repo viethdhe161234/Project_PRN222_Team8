@@ -1,0 +1,74 @@
+﻿@model IEnumerable<LibraryManagement.Domain.Entities.BorrowRequest>
+
+@{
+    Layout = "_LibrarianLayout";
+    ViewData["Title"] = "Pending Requests";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<h5 class="mb-3">Pending Borrow Requests</h5>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No pending requests.</div>
+}
+else
+{
+    foreach (var request in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>
+                    <strong>@request.Member.FullName</strong>
+                    — Request #@request.Id
+                    — @request.RequestDate.ToString("dd/MM/yyyy HH:mm")
+                </span>
+                <div class="d-flex gap-2">
+                    <form asp-action="Accept" asp-route-id="@request.Id" method="post">
+                        <button type="submit" class="btn btn-sm btn-success"
+                                onclick="return confirm('Accept this request?')">
+                            ✅ Accept
+                        </button>
+                    </form>
+                    <form asp-action="Reject" asp-route-id="@request.Id" method="post"
+                          onsubmit="return confirm('Reject this request?')">
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="reason" class="form-control form-control-sm"
+                                   placeholder="Reason..." required style="width: 150px;" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Reject</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Book</th>
+                            <th>Publisher</th>
+                            <th>Year</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in request.Items)
+                        {
+                            <tr>
+                                <td>@item.BookEdition.Book.Title</td>
+                                <td>@item.BookEdition.Publisher</td>
+                                <td>@item.BookEdition.PublishYear</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+}

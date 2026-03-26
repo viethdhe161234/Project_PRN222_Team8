@@ -1,0 +1,85 @@
+﻿@model IEnumerable<LibraryManagement.Domain.Entities.BookCopy>
+
+@{
+    Layout = "_AdminLayout";
+    var edition = ViewBag.Edition as LibraryManagement.Domain.Entities.BookEdition;
+    ViewData["Title"] = $"Copies — {edition?.Publisher} {edition?.PublishYear}";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h5 class="mb-0">Copies</h5>
+        <small class="text-muted">@edition?.Publisher — @edition?.PublishYear</small>
+    </div>
+    <a asp-controller="Book" asp-action="Detail" asp-route-id="@edition?.BookId"
+       class="btn btn-secondary btn-sm">← Back to Book</a>
+</div>
+
+{{!-- Add Copy Form --}}
+<div class="card mb-4" style="max-width: 500px;">
+    <div class="card-header">Add Copy</div>
+    <div class="card-body">
+        <form asp-action="Create" method="post" class="d-flex gap-2">
+            <input type="hidden" name="EditionId" value="@edition?.Id" />
+            <input type="text" name="Barcode" class="form-control"
+                   placeholder="Enter barcode e.g. LIB-0001" required />
+            <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+    </div>
+</div>
+
+{{!-- Copy List --}}
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Barcode</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var copy in Model)
+                {
+                    <tr>
+                        <td>@copy.Barcode</td>
+                        <td>
+                            <span class="badge @(copy.IsAvailable ? "bg-success" : "bg-warning text-dark")">
+                                @(copy.IsAvailable ? "Available" : "Borrowed")
+                            </span>
+                        </td>
+                        <td>
+                            @if (copy.IsAvailable)
+                            {
+                                <form asp-action="Delete" method="post" class="d-inline"
+                                      onsubmit="return confirm('Delete this copy?')">
+                                    <input type="hidden" name="id" value="@copy.Id" />
+                                    <input type="hidden" name="editionId" value="@edition?.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">Cannot delete — currently borrowed</span>
+                            }
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="3" class="text-center text-muted py-3">No copies found</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,153 @@
+﻿@model IEnumerable<LibraryManagement.Domain.Entities.Category>
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Categories";
+}
+
+<style>
+    /* CSS hỗ trợ icon Material và căn chỉnh giao diện bảng */
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        vertical-align: middle;
+        font-size: 1.1rem;
+    }
+
+    /* Thiết kế riêng cho bảng để các dòng tách rời nhau */
+    .table-custom {
+        border-collapse: separate;
+        border-spacing: 0 0.5rem;
+    }
+
+        .table-custom tbody tr {
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+            .table-custom tbody tr:hover {
+                background-color: #f0f9ff; /* Màu hover xanh dương nhạt cho Category */
+                transform: translateY(-1px);
+            }
+
+        .table-custom td {
+            border-top: 1px solid #f1f5f9;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 1.25rem 1rem;
+            vertical-align: middle;
+        }
+
+            .table-custom td:first-child {
+                border-left: 1px solid #f1f5f9;
+                border-top-left-radius: 0.75rem;
+                border-bottom-left-radius: 0.75rem;
+            }
+
+            .table-custom td:last-child {
+                border-right: 1px solid #f1f5f9;
+                border-top-right-radius: 0.75rem;
+                border-bottom-right-radius: 0.75rem;
+            }
+
+    /* Hiệu ứng ẩn/hiện nút thao tác khi di chuột vào hàng */
+    .action-btns {
+        opacity: 0.6;
+        transition: opacity 0.2s;
+    }
+
+    .table-custom tbody tr:hover .action-btns {
+        opacity: 1;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-end mb-4">
+    <div>
+        <nav class="d-flex gap-2 text-uppercase text-muted fw-bold mb-2" style="font-size: 0.75rem; letter-spacing: 0.1em;">
+            <span>Library</span>
+            <span class="text-secondary">/</span>
+            <span style="color: #0284c7 !important;">Categories</span>
+        </nav>
+        <h2 class="fw-bolder mb-0 text-dark" style="font-size: 2.25rem; font-family: 'Manrope', sans-serif;">Categories</h2>
+    </div>
+    <a asp-action="Create" class="btn text-white px-4 py-2 fw-semibold rounded-3 d-flex align-items-center gap-2 shadow-sm" style="background-color: #0284c7; border-color: #0284c7; transition: all 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+        <span class="material-symbols-outlined fs-5">add_circle</span>
+        Add Category
+    </a>
+</div>
+
+<div class="mb-4">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert d-flex align-items-center gap-3 border-0 border-start border-4 py-3 shadow-sm rounded-end-3" role="alert" style="background-color: #e6f8f0; color: #005236; border-color: #059669 !important;">
+            <span class="material-symbols-outlined fs-4">check_circle</span>
+            <div class="fw-medium mb-0">@TempData["Success"]</div>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert d-flex align-items-center gap-3 border-0 border-start border-4 border-danger py-3 shadow-sm rounded-end-3" role="alert" style="background-color: #ffdad6; color: #93000a;">
+            <span class="material-symbols-outlined fs-4 text-danger">error</span>
+            <div class="fw-medium mb-0">@TempData["Error"]</div>
+        </div>
+    }
+</div>
+
+<div class="card border-0 shadow-sm rounded-4" style="background-color: #fcfcff;">
+    <div class="card-body p-3">
+        <table class="table table-borderless table-custom mb-0">
+            <thead>
+                <tr class="text-muted fw-semibold text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                    <th class="px-4 text-center" style="width: 80px;">#</th>
+                    <th class="px-4">Category Name</th>
+                    <th class="px-4 text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="3" class="px-4 py-5 text-center text-muted bg-white rounded-3 shadow-sm">
+                            <span class="material-symbols-outlined mb-2 opacity-50" style="font-size: 3rem;">category</span>
+                            <p class="mb-0 fw-medium">No categories found in the library.</p>
+                            <a asp-action="Create" class="btn btn-link text-decoration-none mt-2 fw-bold" style="color: #0284c7;">Create your first category</a>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr class="bg-white shadow-sm">
+                            <td class="px-4 text-center font-monospace text-muted small">
+                                @item.Id
+                            </td>
+
+                            <td class="px-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: #e0f2fe; color: #0284c7;">
+                                        <span class="material-symbols-outlined">style</span>
+                                    </div>
+                                    <span class="fw-bold fs-5 text-dark" style="font-family: 'Manrope', sans-serif;">@item.Name</span>
+                                </div>
+                            </td>
+
+                            <td class="px-4 text-end">
+                                <div class="action-btns d-flex justify-content-end gap-2">
+                                    <a asp-action="Edit" asp-route-id="@item.Id"
+                                       class="btn btn-sm d-flex align-items-center gap-1 fw-bold rounded-3 px-3"
+                                       style="color: #0284c7; background-color: #f0f9ff; border: 1px solid #bae6fd;">
+                                        <span class="material-symbols-outlined" style="font-size: 1rem;">edit</span> Edit
+                                    </a>
+
+                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="m-0 d-inline-flex" onsubmit="return confirm('Are you sure you want to delete the @item.Name category?')">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 fw-bold rounded-3 px-3">
+                                            <span class="material-symbols-outlined" style="font-size: 1rem;">delete</span> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

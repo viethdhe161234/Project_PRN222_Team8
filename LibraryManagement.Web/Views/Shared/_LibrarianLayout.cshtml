@@ -1,0 +1,154 @@
+﻿@using Microsoft.AspNetCore.Http
+@{
+    var username = Context.Session.GetString("Username");
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Librarian Panel</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        body {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        .sidebar {
+            min-height: 100vh;
+            width: 250px;
+            background-color: #0f4c75;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            padding-top: 20px;
+        }
+
+        .sidebar-brand {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 10px 20px 20px;
+            border-bottom: 1px solid #1b6ca8;
+            display: block;
+            text-decoration: none;
+        }
+
+            .sidebar-brand:hover {
+                color: #b8d4e8;
+            }
+
+        .sidebar .nav-link {
+            color: #b8d4e8;
+            padding: 10px 20px;
+        }
+
+            .sidebar .nav-link:hover {
+                color: #fff;
+                background-color: #1b6ca8;
+            }
+
+            .sidebar .nav-link.active {
+                color: #fff;
+                background-color: #1976d2;
+            }
+
+        .sidebar .nav-section {
+            color: #7bafd4;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 15px 20px 5px;
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+        }
+
+        .topbar {
+            background-color: #fff;
+            border-bottom: 1px solid #dee2e6;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .topbar .page-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin: 0;
+                color: #212529;
+            }
+
+        .content-area {
+            padding: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a class="sidebar-brand" asp-controller="Librarian" asp-action="Dashboard">
+            📚 Librarian Panel
+        </a>
+
+        <ul class="nav flex-column mt-2">
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")"
+                   asp-controller="Librarian" asp-action="Dashboard">
+                    🏠 Dashboard
+                </a>
+            </li>
+
+            <li><span class="nav-section">Borrow Management</span></li>
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "PendingRequests" ? "active" : "")"
+                   asp-controller="Librarian" asp-action="PendingRequests">
+                    📋 Pending Requests
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "ActiveLoans" ? "active" : "")"
+                   asp-controller="Librarian" asp-action="ActiveLoans">
+                    📖 Active Loans
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "OverdueLoans" ? "active" : "")"
+                   asp-controller="Librarian" asp-action="OverdueLoans">
+                    ⚠️ Overdue Loans
+                    @if (ViewBag.OverdueCount != null && ViewBag.OverdueCount > 0)
+                    {
+                        <span class="badge bg-danger ms-1">@ViewBag.OverdueCount</span>
+                    }
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="topbar">
+            <h6 class="page-title">@ViewData["Title"]</h6>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted small">Hello, <strong>@username</strong></span>
+                <a asp-controller="Account" asp-action="Logout"
+                   class="btn btn-sm btn-outline-danger">Logout</a>
+            </div>
+        </div>
+
+        <div class="content-area">
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

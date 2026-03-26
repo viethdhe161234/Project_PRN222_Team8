@@ -1,0 +1,316 @@
+﻿@model LibraryManagement.Web.Models.DashboardViewModel
+
+@{
+    Layout = "_LibrarianLayout";
+    ViewData["Title"] = "Dashboard";
+    var today = DateTime.Today;
+}
+
+<style>
+    .stat-card {
+        background: #fff;
+        border: 1px solid #e9ecef;
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .stat-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 0.625rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .stat-value {
+        font-size: 1.6rem;
+        font-weight: 700;
+        line-height: 1;
+        color: #212529;
+    }
+
+    .stat-label {
+        font-size: 0.78rem;
+        color: #6c757d;
+        margin-top: 0.2rem;
+    }
+
+    .work-card {
+        background: #fff;
+        border: 1px solid #e9ecef;
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
+
+    .work-card-header {
+        padding: 0.875rem 1rem;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f8f9fa;
+    }
+
+    .work-card-title {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #212529;
+        margin: 0;
+    }
+
+    .request-item {
+        padding: 0.875rem 1rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+        .request-item:last-child {
+            border-bottom: none;
+        }
+
+    .loan-item {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+    }
+
+        .loan-item:last-child {
+            border-bottom: none;
+        }
+
+    .empty-state {
+        padding: 2rem 1rem;
+        text-align: center;
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+</style>
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h5 class="fw-bold mb-0">Librarian Dashboard</h5>
+        <small class="text-muted">@today.ToString("dddd, dd MMMM yyyy")</small>
+    </div>
+</div>
+
+<!-- Stat cards: công việc hôm nay -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-card @(Model.PendingRequests > 0 ? "border-warning" : "")">
+            <div class="stat-icon" style="background:#fef3c7;">⏳</div>
+            <div>
+                <div class="stat-value @(Model.PendingRequests > 0 ? "text-warning" : "")">
+                    @Model.PendingRequests
+                </div>
+                <div class="stat-label">Needs review</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card @(Model.OverdueLoans > 0 ? "border-danger" : "")">
+            <div class="stat-icon" style="background:#fee2e2;">⚠️</div>
+            <div>
+                <div class="stat-value @(Model.OverdueLoans > 0 ? "text-danger" : "")">
+                    @Model.OverdueLoans
+                </div>
+                <div class="stat-label">Overdue</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#dbeafe;">📖</div>
+            <div>
+                <div class="stat-value text-primary">@Model.ActiveLoans</div>
+                <div class="stat-label">Active loans</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#dcfce7;">✅</div>
+            <div>
+                <div class="stat-value text-success">@Model.AvailableCopies</div>
+                <div class="stat-label">Available copies</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main work area -->
+<div class="row g-3">
+
+    <!-- Cột trái: Pending requests cần xử lý -->
+    <div class="col-lg-7">
+        <div class="work-card">
+            <div class="work-card-header">
+                <span class="work-card-title">
+                    📋 Pending Borrow Requests
+                    @if (Model.PendingRequests > 0)
+                    {
+                        <span class="badge bg-warning text-dark ms-1">@Model.PendingRequests</span>
+                    }
+                </span>
+                <a asp-action="PendingRequests" class="btn btn-sm btn-outline-secondary"
+                   style="font-size:0.75rem;">View all</a>
+            </div>
+
+            @if (!Model.RecentRequests.Any())
+            {
+                <div class="empty-state">
+                    ✅ No pending requests — you're all caught up!
+                </div>
+            }
+            else
+            {
+                foreach (var req in Model.RecentRequests)
+                {
+                    <div class="request-item">
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+                            <div class="flex-grow-1 min-w-0">
+                                <div class="fw-semibold" style="font-size:0.9rem;">
+                                    @req.Member?.FullName
+                                </div>
+                                <div class="text-muted" style="font-size:0.78rem;">
+                                    Requested @req.RequestDate.ToString("dd/MM/yyyy HH:mm")
+                                </div>
+                                <div class="mt-1 d-flex flex-wrap gap-1">
+                                    @foreach (var item in req.Items)
+                                    {
+                                        <span class="badge bg-light text-dark border"
+                                              style="font-size:0.72rem;font-weight:400;">
+                                            @(item.BookEdition?.Book?.Title ?? "—")
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="d-flex gap-1 flex-shrink-0">
+                                <form asp-action="Accept" asp-route-id="@req.Id" method="post"
+                                      onsubmit="return confirm('Accept request from @req.Member?.FullName?')">
+                                    <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                                </form>
+                                <form asp-action="Reject" asp-route-id="@req.Id" method="post"
+                                      onsubmit="return confirm('Reject this request?')">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Reject</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <!-- Cột phải: Overdue + Due soon -->
+    <div class="col-lg-5 d-flex flex-column gap-3">
+
+        <!-- Overdue loans -->
+        <div class="work-card">
+            <div class="work-card-header">
+                <span class="work-card-title">
+                    ⚠️ Overdue Loans
+                    @if (Model.OverdueLoans > 0)
+                    {
+                        <span class="badge bg-danger ms-1">@Model.OverdueLoans</span>
+                    }
+                </span>
+                <a asp-action="OverdueLoans" class="btn btn-sm btn-outline-danger"
+                   style="font-size:0.75rem;">View all</a>
+            </div>
+            @if (!Model.OverdueLoansList.Any())
+            {
+                <div class="empty-state">No overdue loans 🎉</div>
+            }
+            else
+            {
+                foreach (var loan in Model.OverdueLoansList.Take(4))
+                {
+                    <div class="loan-item">
+                        <div class="flex-grow-1 min-w-0">
+                            <div class="fw-semibold text-truncate" style="font-size:0.85rem;">
+                                @loan.Member?.FullName
+                            </div>
+                            <div class="text-truncate" style="font-size:0.78rem;color:#6c757d;">
+                                @loan.BookCopy?.BookEdition?.Book?.Title
+                            </div>
+                        </div>
+                        <span class="badge bg-danger flex-shrink-0">
+                            @loan.OverdueDays d overdue
+                        </span>
+                    </div>
+                }
+                @if (Model.OverdueLoans > 4)
+                {
+                    <div style="padding:0.5rem 1rem;font-size:0.78rem;color:#6c757d;text-align:center;">
+                        +@(Model.OverdueLoans - 4) more —
+                        <a asp-action="OverdueLoans" class="text-danger fw-semibold">see all</a>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- Due soon (trong 3 ngày tới) -->
+        <div class="work-card">
+            <div class="work-card-header">
+                <span class="work-card-title">
+                    🔔 Due Soon
+                    @if (Model.DueSoonLoans.Any())
+                    {
+                        <span class="badge bg-warning text-dark ms-1">@Model.DueSoonLoans.Count</span>
+                    }
+                </span>
+                <a asp-action="ActiveLoans" class="btn btn-sm btn-outline-secondary"
+                   style="font-size:0.75rem;">Active loans</a>
+            </div>
+            @if (!Model.DueSoonLoans.Any())
+            {
+                <div class="empty-state">No loans due in the next 3 days</div>
+            }
+            else
+            {
+                foreach (var loan in Model.DueSoonLoans.Take(4))
+                {
+                    var daysLeft = (loan.DueDate - DateTime.Now).Days;
+                    <div class="loan-item">
+                        <div class="flex-grow-1 min-w-0">
+                            <div class="fw-semibold text-truncate" style="font-size:0.85rem;">
+                                @loan.Member?.FullName
+                            </div>
+                            <div class="text-truncate" style="font-size:0.78rem;color:#6c757d;">
+                                @loan.BookCopy?.BookEdition?.Book?.Title
+                            </div>
+                        </div>
+                        <span class="badge @(daysLeft == 0 ? "bg-danger" : "bg-warning text-dark") flex-shrink-0">
+                            @(daysLeft == 0 ? "Today" : $"{daysLeft}d left")
+                        </span>
+                    </div>
+                }
+            }
+        </div>
+
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mt-3">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mt-3">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
