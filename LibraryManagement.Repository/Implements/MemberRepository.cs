@@ -1,6 +1,7 @@
 ﻿using LibraryManagement.Domain.Entities;
 using LibraryManagement.Repository.Data;
 using LibraryManagement.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,8 @@ namespace LibraryManagement.Repository.Implements
 
         public Member? GetById(Guid id)
         {
-            return _context.Members.FirstOrDefault(m => m.Id == id);
+            return _context.Members.Include(m => m.Account)
+                .FirstOrDefault(m => m.Id == id);
         }
 
         public void Update(Member member)

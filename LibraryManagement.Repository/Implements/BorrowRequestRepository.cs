@@ -70,7 +70,7 @@ namespace LibraryManagement.Repository.Implements
         public bool HasActiveRequestForBook(Guid memberId, int bookId)
         {
             return _context.BorrowRequests
-                .Where(r => r.MemberId == memberId && (r.Status == "Pending" || r.Status == "Approved"))
+                .Where(r => r.MemberId == memberId && (r.Status == "Pending"))
                 .Any(r => r.Items.Any(i => i.BookEdition.BookId == bookId));
         }
     }
