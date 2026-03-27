@@ -70,15 +70,14 @@
 <div class="d-flex justify-content-between align-items-end mb-4">
     <div>
         <nav class="d-flex gap-2 text-uppercase text-muted fw-bold mb-2" style="font-size: 0.75rem; letter-spacing: 0.1em;">
-            <span>Curation</span>
-            <span class="text-secondary">/</span>
-            <span class="text-primary">Authors</span>
+            
+            <span class="text-primary" style="color: #3525cd !important;">Authors</span>
         </nav>
         <h2 class="fw-bolder mb-0 text-dark" style="font-size: 2.25rem; font-family: 'Manrope', sans-serif;">Authors</h2>
     </div>
-    <a asp-action="Create" class="btn btn-primary px-4 py-2 fw-semibold rounded-3 d-flex align-items-center gap-2" style="background-color: #3525cd; border-color: #3525cd;">
+    <a asp-action="Create" class="btn px-4 py-2 fw-semibold rounded-3 d-flex align-items-center gap-2 text-white shadow-sm" style="background-color: #3525cd; transition: all 0.2s;" onmouseover="this.style.filter='brightness(0.9)'" onmouseout="this.style.filter='brightness(1)'">
         <span class="material-symbols-outlined">person_add</span>
-        + Add Author
+        Add Author
     </a>
 </div>
 
@@ -144,13 +143,22 @@
                             <td class="px-4 text-end">
                                 <div class="action-btns d-flex justify-content-end gap-2">
                                     <a asp-action="Edit" asp-route-id="@author.Id"
-                                       class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1 fw-bold rounded-3 px-3">
-                                        <span class="material-symbols-outlined">edit</span> Edit
+                                       class="btn btn-sm d-flex align-items-center justify-content-center rounded-2 shadow-sm border"
+                                       style="width: 36px; height: 36px; background-color: #ffffff; color: #3525cd; border-color: #e2dfff !important; transition: all 0.2s;"
+                                       onmouseover="this.style.backgroundColor='#f4f2ff'; this.style.borderColor='#3525cd !important';"
+                                       onmouseout="this.style.backgroundColor='#ffffff'; this.style.borderColor='#e2dfff !important';"
+                                       title="Edit Author">
+                                        <span class="material-symbols-outlined" style="font-size: 1.1rem;">edit</span>
                                     </a>
 
-                                    <form asp-action="Delete" asp-route-id="@author.Id" method="post" class="m-0 d-inline-flex" onsubmit="return confirm('Delete this author?')">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 fw-bold rounded-3 px-3">
-                                            <span class="material-symbols-outlined">delete</span> Delete
+                                    <form asp-action="Delete" asp-route-id="@author.Id" method="post" class="m-0 d-inline-flex" onsubmit="return confirm('Are you sure you want to delete this author?')">
+                                        <button type="submit"
+                                                class="btn btn-sm d-flex align-items-center justify-content-center rounded-2 shadow-sm border p-0"
+                                                style="width: 36px; height: 36px; background-color: #ffffff; color: #dc3545; border-color: #f8d7da !important; transition: all 0.2s;"
+                                                onmouseover="this.style.backgroundColor='#fff5f5'; this.style.color='#bd2130';"
+                                                onmouseout="this.style.backgroundColor='#ffffff'; this.style.color='#dc3545';"
+                                                title="Delete Author">
+                                            <span class="material-symbols-outlined" style="font-size: 1.1rem;">delete</span>
                                         </button>
                                     </form>
                                 </div>

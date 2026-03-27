@@ -5,46 +5,168 @@
     ViewData["Title"] = "Borrow Policy";
 }
 
+<style>
+    /* CSS hỗ trợ icon Material */
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        vertical-align: middle;
+    }
+
+    /* Form container */
+    .settings-card {
+        background-color: #ffffff;
+        border: 1px solid #e9ecef;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Custom Input Group */
+    .input-group-text-custom {
+        background-color: #f1f3f5;
+        border: 1px solid #e9ecef;
+        color: #6c757d;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .form-control-custom {
+        background-color: #ffffff;
+        border: 1px solid #e9ecef;
+        font-weight: 600;
+        color: #212529;
+    }
+
+        .form-control-custom:focus {
+            border-color: #3525cd;
+            box-shadow: 0 0 0 0.25rem rgba(53, 37, 205, 0.1);
+        }
+
+    .policy-icon {
+        width: 40px;
+        height: 40px;
+        background-color: #f4f2ff;
+        color: #3525cd;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
+<div class="mb-4">
+    <nav class="d-flex gap-2 text-uppercase text-muted fw-bold mb-1" style="font-size: 0.75rem; letter-spacing: 0.1em;">
+        <span>System Configuration</span>
+        <span class="text-secondary">/</span>
+        <span style="color: #3525cd !important;">Borrow Policy</span>
+    </nav>
+    <h2 class="fw-bold mb-0 text-dark" style="font-size: 1.75rem; letter-spacing: -0.02em;">Circulation Rules</h2>
+    <p class="text-muted">Define the global constraints for borrowing and lending activities.</p>
+</div>
+
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success">@TempData["Success"]</div>
+    <div class="alert d-flex align-items-center gap-3 border-0 border-start border-4 border-success py-3 shadow-sm rounded-end-3 mb-4" role="alert" style="background-color: #e6f8f0; color: #005236;">
+        <span class="material-symbols-outlined fs-4">check_circle</span>
+        <div class="fw-medium mb-0">@TempData["Success"]</div>
+    </div>
 }
 
-<div class="card" style="max-width: 500px;">
-    <div class="card-header">Borrow Policy Settings</div>
-    <div class="card-body">
-        <form asp-action="Index" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<div class="row">
+    <div class="col-12 col-lg-6">
+        <div class="settings-card p-4 p-md-5">
+            <form asp-action="Index" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-4 fw-medium"></div>
 
-            <div class="mb-3">
-                <label asp-for="MaxBooksPerRequest" class="form-label">
-                    Max Books Per Request
-                </label>
-                <input asp-for="MaxBooksPerRequest" type="number" class="form-control" />
-                <span asp-validation-for="MaxBooksPerRequest" class="text-danger"></span>
-                <small class="text-muted">Maximum number of books a user can request at once</small>
-            </div>
+                <div class="mb-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="policy-icon">
+                            <span class="material-symbols-outlined">shopping_cart_checkout</span>
+                        </div>
+                        <label asp-for="MaxBooksPerRequest" class="form-label fw-bold mb-0 text-dark">Max Books Per Request</label>
+                    </div>
+                    <div class="input-group">
+                        <input asp-for="MaxBooksPerRequest" type="number" class="form-control form-control-lg form-control-custom" placeholder="0" />
+                        <span class="input-group-text input-group-text-custom rounded-end-3 px-3">BOOKS</span>
+                    </div>
+                    <span asp-validation-for="MaxBooksPerRequest" class="text-danger small mt-2 d-block"></span>
+                    <div class="text-muted mt-2" style="font-size: 0.85rem;">
+                        How many books a member can add to a single borrow request.
+                    </div>
+                </div>
 
-            <div class="mb-3">
-                <label asp-for="MaxDaysBorrow" class="form-label">
-                    Max Borrow Days
-                </label>
-                <input asp-for="MaxDaysBorrow" type="number" class="form-control" />
-                <span asp-validation-for="MaxDaysBorrow" class="text-danger"></span>
-                <small class="text-muted">Maximum number of days a book can be borrowed</small>
-            </div>
+                <hr class="my-4 opacity-50" />
 
-            <div class="mb-3">
-                <label asp-for="MaxActiveLoan" class="form-label">
-                    Max Active Loans
-                </label>
-                <input asp-for="MaxActiveLoan" type="number" class="form-control" />
-                <span asp-validation-for="MaxActiveLoan" class="text-danger"></span>
-                <small class="text-muted">Maximum number of active loans a user can have</small>
-            </div>
+                <div class="mb-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="policy-icon">
+                            <span class="material-symbols-outlined">calendar_today</span>
+                        </div>
+                        <label asp-for="MaxDaysBorrow" class="form-label fw-bold mb-0 text-dark">Max Borrow Duration</label>
+                    </div>
+                    <div class="input-group">
+                        <input asp-for="MaxDaysBorrow" type="number" class="form-control form-control-lg form-control-custom" placeholder="0" />
+                        <span class="input-group-text input-group-text-custom rounded-end-3 px-3">DAYS</span>
+                    </div>
+                    <span asp-validation-for="MaxDaysBorrow" class="text-danger small mt-2 d-block"></span>
+                    <div class="text-muted mt-2" style="font-size: 0.85rem;">
+                        The standard period before a book is considered overdue.
+                    </div>
+                </div>
 
-            <button type="submit" class="btn btn-primary">Save</button>
-        </form>
+                <hr class="my-4 opacity-50" />
+
+                <div class="mb-5">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="policy-icon" style="background-color: #fff4e6; color: #fd7e14;">
+                            <span class="material-symbols-outlined">account_balance_wallet</span>
+                        </div>
+                        <label asp-for="MaxActiveLoan" class="form-label fw-bold mb-0 text-dark">Active Loan Limit</label>
+                    </div>
+                    <div class="input-group">
+                        <input asp-for="MaxActiveLoan" type="number" class="form-control form-control-lg form-control-custom" placeholder="0" />
+                        <span class="input-group-text input-group-text-custom rounded-end-3 px-3">LOANS</span>
+                    </div>
+                    <span asp-validation-for="MaxActiveLoan" class="text-danger small mt-2 d-block"></span>
+                    <div class="text-muted mt-2" style="font-size: 0.85rem;">
+                        The maximum number of books a member can have in their possession at any time.
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="btn btn-lg w-100 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center gap-2"
+                            style="background-color: #3525cd; border-radius: 0.75rem; padding: 0.8rem; transition: all 0.3s ease;"
+                            onmouseover="this.style.transform='translateY(-2px)'; this.style.filter='brightness(1.1)';"
+                            onmouseout="this.style.transform='translateY(0px)'; this.style.filter='brightness(1)';"
+                            title="Update Policy">
+                        <span class="material-symbols-outlined">save</span>
+                        Update Circulation Rules
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-5 mt-4 mt-lg-0">
+        <div class="p-4 rounded-4 border-0" style="background-color: #f8f9fa;">
+            <h5 class="fw-bold text-dark d-flex align-items-center gap-2 mb-3">
+                <span class="material-symbols-outlined text-primary">info</span>
+                Policy Guide
+            </h5>
+            <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+                <li class="d-flex gap-3">
+                    <div class="text-primary fw-bold">01.</div>
+                    <div class="small text-secondary">Settings are applied globally to all members unless overridden by specific membership tiers.</div>
+                </li>
+                <li class="d-flex gap-3">
+                    <div class="text-primary fw-bold">02.</div>
+                    <div class="small text-secondary">Changes to "Max Days" will only apply to new borrow requests, not existing active loans.</div>
+                </li>
+                <li class="d-flex gap-3">
+                    <div class="text-primary fw-bold">03.</div>
+                    <div class="small text-secondary">Ensure limits are realistic to maintain a healthy circulation of library assets.</div>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 

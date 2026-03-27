@@ -5,29 +5,121 @@
     ViewData["Title"] = "Add Edition";
 }
 
-<div class="card" style="max-width: 500px;">
-    <div class="card-header">Add Edition</div>
-    <div class="card-body">
-        <form asp-action="Create" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-            <input asp-for="BookId" type="hidden" />
+<style>
+    /* CSS hỗ trợ icon Material */
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        vertical-align: middle;
+    }
 
-            <div class="mb-3">
-                <label asp-for="Publisher" class="form-label"></label>
-                <input asp-for="Publisher" class="form-control" />
-                <span asp-validation-for="Publisher" class="text-danger"></span>
+    /* Container form sạch sẽ */
+    .form-wrapper {
+        background-color: #ffffff;
+        border: 1px solid #e9ecef;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    /* Định dạng chung cho input, textarea, select */
+    .form-control-custom {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #212529;
+        transition: all 0.2s ease-in-out;
+    }
+
+        /* Hiệu ứng viền tím khi click vào ô nhập liệu */
+        .form-control-custom:focus {
+            background-color: #ffffff;
+            border-color: #3525cd;
+            box-shadow: 0 0 0 0.25rem rgba(53, 37, 205, 0.15);
+            outline: 0;
+        }
+
+    /* Định dạng nhãn (Label) */
+    .form-label-custom {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #6c757d;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav class="d-flex gap-2 text-uppercase text-muted fw-bold mb-1" style="font-size: 0.75rem; letter-spacing: 0.1em;">
+            
+            <a asp-controller="Book" asp-action="Index" class="text-decoration-none text-muted" onmouseover="this.style.color='#3525cd'" onmouseout="this.style.color='#6c757d'" style="transition: color 0.2s;">Books</a>
+            <span class="text-secondary">/</span>
+            <span style="color: #3525cd !important;">New Edition</span>
+        </nav>
+        <h2 class="fw-bold mb-0 text-dark" style="font-size: 1.75rem; letter-spacing: -0.02em;">Add Edition</h2>
+    </div>
+    <a asp-controller="Book" asp-action="Detail" asp-route-id="@Model.BookId" class="btn btn-light px-3 py-2 fw-semibold rounded-2 d-flex align-items-center gap-2 border shadow-sm" style="font-size: 0.95rem;">
+        <span class="material-symbols-outlined" style="font-size: 1.2rem;">arrow_back</span>
+        Back to Book
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-12 col-xl-6 col-lg-8">
+        <div class="form-wrapper">
+            <div class="card-body p-4 p-md-5">
+
+                <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom border-light-subtle">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm flex-shrink-0" style="width: 56px; height: 56px; background-color: #e2dfff; color: #3525cd;">
+                        <span class="material-symbols-outlined fs-2">library_books</span>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-1 text-dark" style="font-family: 'Manrope', sans-serif;">Edition Details</h4>
+                        <p class="text-muted mb-0" style="font-size: 0.95rem;">Record a new publishing version for this book.</p>
+                    </div>
+                </div>
+
+                <form asp-action="Create" method="post">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert d-flex align-items-center gap-3 border-0 border-start border-4 border-danger py-3 shadow-sm rounded-end-3 mb-4" role="alert" style="background-color: #ffdad6; color: #93000a;">
+                            <span class="material-symbols-outlined fs-4 text-danger">error</span>
+                            <div asp-validation-summary="ModelOnly" class="fw-medium mb-0"></div>
+                        </div>
+                    }
+
+                    <input asp-for="BookId" type="hidden" />
+
+                    <div class="mb-4">
+                        <label asp-for="Publisher" class="form-label form-label-custom">
+                            Publisher <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="Publisher" class="form-control form-control-lg rounded-3 shadow-none form-control-custom" placeholder="e.g. Penguin Classics" />
+                        <span asp-validation-for="Publisher" class="text-danger small mt-2 d-block fw-medium"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="PublishYear" class="form-label form-label-custom">
+                            Publish Year <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="PublishYear" type="number" class="form-control form-control-lg rounded-3 shadow-none form-control-custom" placeholder="e.g. 1998" />
+                        <span asp-validation-for="PublishYear" class="text-danger small mt-2 d-block fw-medium"></span>
+                    </div>
+
+                    <div class="d-flex gap-3 justify-content-end pt-4 border-top border-light-subtle mt-5">
+                        <a asp-controller="Book" asp-action="Detail" asp-route-id="@Model.BookId" class="btn btn-light px-4 py-2 fw-semibold rounded-3 d-flex align-items-center gap-2 border text-secondary" style="transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f1f3f5'" onmouseout="this.style.backgroundColor='transparent'">
+                            <span class="material-symbols-outlined" style="font-size: 1.2rem;">close</span>
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn px-4 py-2 fw-semibold rounded-3 d-flex align-items-center gap-2 text-white shadow-sm" style="background-color: #3525cd; transition: all 0.2s;" onmouseover="this.style.filter='brightness(0.9)'" onmouseout="this.style.filter='brightness(1)'">
+                            <span class="material-symbols-outlined" style="font-size: 1.2rem;">save</span>
+                            Save Edition
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <div class="mb-3">
-                <label asp-for="PublishYear" class="form-label"></label>
-                <input asp-for="PublishYear" type="number" class="form-control" />
-                <span asp-validation-for="PublishYear" class="text-danger"></span>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Save</button>
-            <a asp-controller="Book" asp-action="Detail" asp-route-id="@Model.BookId"
-               class="btn btn-secondary">Cancel</a>
-        </form>
+        </div>
     </div>
 </div>
 
