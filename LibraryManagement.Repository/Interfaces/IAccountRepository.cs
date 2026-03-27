@@ -18,5 +18,6 @@ namespace LibraryManagement.Repository.Interfaces
         IEnumerable<Account> GetAll();
         void Delete(Guid id);
         int CountActive();
+        Account? GetByResetToken(string token);
     }
 }

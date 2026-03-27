@@ -260,5 +260,51 @@ namespace LibraryManagement.Web.Controllers
                 .Select(r => new SelectListItem(r.Name, r.Name))
                 .ToList();
         }
+        public IActionResult ForgotPassword()
+        { 
+            return View(); 
+        }
+        [HttpPost]
+        public IActionResult ForgotPassword(string email)
+        {
+            try
+            {
+                var resetBaseUrl = $"{Request.Scheme}://{Request.Host}/Account/ResetPassword";
+                _accountService.ForgotPassword(email, resetBaseUrl);
+                TempData["Success"] = "Password reset link sent! Please check your email.";
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View();
+            }
+        }
+
+        public IActionResult ResetPassword(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+                return RedirectToAction("Login");
+
+            return View(new ResetPasswordViewModel { Token = token });
+        }
+
+        [HttpPost]
+        public IActionResult ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            try
+            {
+                _accountService.ResetPassword(model.Token, model.NewPassword);
+                TempData["Success"] = "Password reset successfully. Please login.";
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(model);
+            }
+        }
     }
 }

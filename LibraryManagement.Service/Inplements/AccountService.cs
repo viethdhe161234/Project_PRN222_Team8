@@ -14,10 +14,12 @@ namespace LibraryManagement.Service.Inplements
     {
         private readonly IAccountRepository _accountRepository;
         private readonly IRoleRepository _roleRepository;
-        public AccountService(IAccountRepository accountRepository, IRoleRepository roleRepository)
+        private readonly IEmailService _emailService;
+        public AccountService(IAccountRepository accountRepository, IRoleRepository roleRepository, IEmailService emailService)
         {
             _accountRepository = accountRepository;
             _roleRepository = roleRepository;
+            _emailService = emailService;
         }
 
         public void ChangePassword(string username, string currentPassword, string newPassword)
@@ -101,6 +103,32 @@ namespace LibraryManagement.Service.Inplements
             _accountRepository.Delete(id);
         }
 
+        public void ForgotPassword(string email, string resetBaseUrl)
+        {
+            var account = _accountRepository.GetByEmail(email);
+            if (account == null)
+                throw new Exception("No account found with this email");
+
+            var token = Guid.NewGuid().ToString("N");
+            account.ResetPasswordToken = token;
+            account.ResetPasswordExpiry = DateTime.Now.AddHours(1);
+            _accountRepository.Update(account);
+
+            var resetLink = $"{resetBaseUrl}?token={token}";
+            var body = $@"
+            <h3>Reset Your Password</h3>
+            <p>Click the link below to reset your password:</p>
+            <p><a href='{resetLink}' style='padding:10px 20px; background:#1a56db;
+                color:white; text-decoration:none; border-radius:5px;'>
+                Reset Password
+            </a></p>
+            <p>This link will expire in <strong>1 hour</strong>.</p>
+            <p>If you did not request this, please ignore this email.</p>
+        ";
+
+            _emailService.SendEmail(email, "Reset Your Password — Library System", body);
+        }
+
         public IEnumerable<Account> GetAll()
         {
             return _accountRepository.GetAll();
@@ -155,6 +183,18 @@ namespace LibraryManagement.Service.Inplements
             _accountRepository.Add(account);
         }
 
+        public void ResetPassword(string token, string newPassword)
+        {
+            var account = _accountRepository.GetByResetToken(token);
+            if (account == null)
+                throw new Exception("Invalid or expired reset link");
+
+            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            account.ResetPasswordToken = null;
+            account.ResetPasswordExpiry = null;
+            _accountRepository.Update(account);
+        }
+
         public void SetActiveStatus(Guid id, bool isActive, string currentUsername)
         {
             var account = _accountRepository.GetById(id);
@@ -195,6 +235,25 @@ namespace LibraryManagement.Service.Inplements
             account.Email = email;
             account.RoleId = role.Id;
 
+            _accountRepository.Update(account);
+        }
+
+        public void UpdateProfile(string username, string newUsername, string newEmail)
+        {
+            var account = _accountRepository.GetByUsername(username);
+            if (account == null)
+                throw new Exception("Account not found");
+
+            var existingByUsername = _accountRepository.GetByUsername(newUsername);
+            if (existingByUsername != null && existingByUsername.Id != account.Id)
+                throw new Exception("Username already exists");
+
+            var existingByEmail = _accountRepository.GetByEmail(newEmail);
+            if (existingByEmail != null && existingByEmail.Id != account.Id)
+                throw new Exception("Email already exists");
+
+            account.Username = newUsername;
+            account.Email = newEmail;
             _accountRepository.Update(account);
         }
     }

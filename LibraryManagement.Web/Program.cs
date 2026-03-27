@@ -1,6 +1,7 @@
 using LibraryManagement.Repository.Data;
 using LibraryManagement.Repository.Implements;
 using LibraryManagement.Repository.Interfaces;
+using LibraryManagement.Service.DTO;
 using LibraryManagement.Service.Inplements;
 using LibraryManagement.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,8 @@ namespace LibraryManagement.Web
             builder.Services.AddDbContext<LibraryDbContext>(options => options.UseSqlServer(
             builder.Configuration.GetConnectionString("MyCnn")
             ));
+            builder.Services.Configure<EmailSettings>(
+                builder.Configuration.GetSection("EmailSettings"));
             //dang ky Repository, Service vao DI
             builder.Services.AddScoped<IRoleRepository, RoleRepository>();
             builder.Services.AddScoped<IRoleService, RoleService>();
@@ -43,6 +46,7 @@ namespace LibraryManagement.Web
             builder.Services.AddScoped<ILoanRepository, LoanRepository>();
             builder.Services.AddScoped<ILoanRepository, LoanRepository>();
             builder.Services.AddScoped<ILoanService, LoanService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

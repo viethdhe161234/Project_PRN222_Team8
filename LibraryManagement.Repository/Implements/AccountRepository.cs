@@ -68,6 +68,12 @@ namespace LibraryManagement.Repository.Implements
             .FirstOrDefault(a => a.MemberId == memberId);
         }
 
+        public Account? GetByResetToken(string token)
+        {
+            return _context.Accounts
+                .FirstOrDefault(a => a.ResetPasswordToken == token && a.ResetPasswordExpiry > DateTime.Now);
+        }
+
         public Account? GetByUsername(string username)
         {
             return _context.Accounts
@@ -86,6 +92,8 @@ namespace LibraryManagement.Repository.Implements
             existing.RoleId = account.RoleId;
             existing.IsActive = account.IsActive;
             existing.PasswordHash = account.PasswordHash;
+            existing.ResetPasswordToken = account.ResetPasswordToken;
+            existing.ResetPasswordExpiry = account.ResetPasswordExpiry;
 
             _context.SaveChanges();
         }

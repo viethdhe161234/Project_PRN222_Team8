@@ -18,5 +18,7 @@ namespace LibraryManagement.Domain.Entities
         public Role Role { get; set; } = null!;
         public Guid MemberId { get; set; }
         public Member Member { get; set; } = null!;
+        public string? ResetPasswordToken { get; set; }
+        public DateTime? ResetPasswordExpiry { get; set; }
     }
 }

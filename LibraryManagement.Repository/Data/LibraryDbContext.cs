@@ -73,7 +73,7 @@ namespace LibraryManagement.Repository.Data
                 {
                     Id = Guid.Parse("aaaaaaaa-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
                     Username = "admin",
-                    Email = "",
+                    Email = "nghethuat24tren7@gmail.com",
                     PasswordHash = "$2a$11$ydw5pVe0.2x8GC6MvPtP6.KsX7fceOXl8Tzhny.XVf0Z2KkiSzhji",
                     IsActive = true,
                     IsEmailVerified = true,
@@ -86,7 +86,7 @@ namespace LibraryManagement.Repository.Data
                 {
                     Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
                     Username = "librarian",
-                    Email = "",
+                    Email = "viethdhe161234@fpt.edu.vn",
                     PasswordHash = "$2a$11$ydw5pVe0.2x8GC6MvPtP6.KsX7fceOXl8Tzhny.XVf0Z2KkiSzhji",
                     IsActive = true,
                     IsEmailVerified = true,
@@ -99,7 +99,7 @@ namespace LibraryManagement.Repository.Data
                 {
                     Id = Guid.Parse("cccccccc-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
                     Username = "user",
-                    Email = "",
+                    Email = "dicket60@gmail.com",
                     PasswordHash = "$2a$11$ydw5pVe0.2x8GC6MvPtP6.KsX7fceOXl8Tzhny.XVf0Z2KkiSzhji",
                     IsActive = true,
                     IsEmailVerified = true,

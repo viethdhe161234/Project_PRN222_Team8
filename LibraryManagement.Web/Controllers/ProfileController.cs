@@ -55,13 +55,39 @@ namespace LibraryManagement.Web.Controllers
         [HttpPost]
         public IActionResult ChangePassword(ChangePasswordViewModel model)
         {
-            if (!ModelState.IsValid) return View("Index", model);
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "Invalid input";
+                return RedirectToAction("Index");
+            }
 
             var username = HttpContext.Session.GetString("Username")!;
             try
             {
                 _accountService.ChangePassword(username, model.CurrentPassword, model.NewPassword);
                 TempData["Success"] = "Password changed successfully";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public IActionResult UpdateAccount(UpdateAccountViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "Invalid input";
+                return RedirectToAction("Index");
+            }
+
+            var username = HttpContext.Session.GetString("Username")!;
+            try
+            {
+                _accountService.UpdateProfile(username, model.NewUsername, model.NewEmail);
+                HttpContext.Session.SetString("Username", model.NewUsername);
+                TempData["Success"] = "Account updated successfully";
             }
             catch (Exception ex)
             {

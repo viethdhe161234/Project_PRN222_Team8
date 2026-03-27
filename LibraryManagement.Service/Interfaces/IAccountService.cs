@@ -22,5 +22,8 @@ namespace LibraryManagement.Service.Interfaces
         void SetActiveStatus(Guid id, bool isActive, string currentUsername);
         void DeleteAccount(Guid id, string currentUsername);
         void ChangePassword(string username, string currentPassword, string newPassword);
+        void UpdateProfile(string username, string newUsername, string newEmail);
+        void ForgotPassword(string email, string resetBaseUrl);
+        void ResetPassword(string token, string newPassword);
     }
 }

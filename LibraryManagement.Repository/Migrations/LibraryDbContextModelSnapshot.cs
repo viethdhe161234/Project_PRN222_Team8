@@ -45,6 +45,12 @@ namespace LibraryManagement.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("ResetPasswordExpiry")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ResetPasswordToken")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
@@ -65,7 +71,7 @@ namespace LibraryManagement.Repository.Migrations
                         new
                         {
                             Id = new Guid("aaaaaaaa-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
-                            Email = "",
+                            Email = "nghethuat24tren7@gmail.com",
                             IsActive = true,
                             IsEmailVerified = true,
                             MemberId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
@@ -76,7 +82,7 @@ namespace LibraryManagement.Repository.Migrations
                         new
                         {
                             Id = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
-                            Email = "",
+                            Email = "viethdhe161234@fpt.edu.vn",
                             IsActive = true,
                             IsEmailVerified = true,
                             MemberId = new Guid("bbbbbbbb-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
@@ -87,7 +93,7 @@ namespace LibraryManagement.Repository.Migrations
                         new
                         {
                             Id = new Guid("cccccccc-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
-                            Email = "",
+                            Email = "dicket60@gmail.com",
                             IsActive = true,
                             IsEmailVerified = true,
                             MemberId = new Guid("cccccccc-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
