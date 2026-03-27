@@ -5,60 +5,137 @@
     ViewData["Title"] = "My Requests";
 }
 
+<style>
+    .request-card {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .request-header {
+        background-color: #f8fafc;
+        border-bottom: 1px solid #f1f5f9;
+        padding: 1rem 1.25rem;
+    }
+
+    .request-id {
+        font-weight: 800;
+        color: #1e293b;
+        font-family: 'Manrope', sans-serif;
+    }
+
+    .badge-status {
+        padding: 0.5rem 0.8rem;
+        border-radius: 0.5rem;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+
+    .table-request thead th {
+        background-color: transparent;
+        color: #94a3b8;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-top: none;
+        padding: 0.75rem 1.25rem;
+    }
+
+    .table-request tbody td {
+        padding: 0.75rem 1.25rem;
+        border-bottom: 1px solid #f8fafc;
+    }
+
+    .rejection-box {
+        background-color: #fff1f2;
+        border-top: 1px solid #fecdd3;
+        padding: 0.75rem 1.25rem;
+    }
+</style>
+
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success">@TempData["Success"]</div>
+    <div class="alert alert-success border-0 shadow-sm mb-4" style="border-radius: 10px;">
+        @TempData["Success"]
+    </div>
 }
 @if (TempData["Error"] != null)
 {
-    <div class="alert alert-danger">@TempData["Error"]</div>
+    <div class="alert alert-danger border-0 shadow-sm mb-4" style="border-radius: 10px;">
+        @TempData["Error"]
+    </div>
 }
 
-<h4 class="mb-3">My Borrow Requests</h4>
+<header class="mb-4">
+    <h4 class="fw-800 font-headline mb-1">My Borrow Requests</h4>
+    <p class="text-muted small">Track the status of your library applications.</p>
+</header>
 
 @if (!Model.Any())
 {
-    <div class="alert alert-info">
-        No requests yet. <a asp-controller="Home" asp-action="Books">Browse books</a>
+    <div class="alert alert-info border-0 shadow-sm" style="border-radius: 12px;">
+        No requests yet. <a asp-controller="Home" asp-action="Books" class="fw-bold">Browse books</a>
     </div>
 }
 else
 {
-    foreach (var request in Model)
+    @foreach (var request in Model)
     {
-        <div class="card mb-3">
-            <div class="card-header d-flex justify-content-between">
-                <span>Request #@request.Id — @request.RequestDate.ToString("dd/MM/yyyy")</span>
-                <span class="badge @(request.Status == "Pending" ? "bg-warning text-dark" :
-                                    request.Status == "Approved" ? "bg-success" : "bg-danger")">
+        <div class="card request-card mb-4">
+            <div class="request-header d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="request-id text-primary">#@request.Id</span>
+                    <span class="text-muted mx-2">•</span>
+                    <span class="small fw-bold text-muted">@request.RequestDate.ToString("dd MMM yyyy")</span>
+                </div>
+
+                @* Logic Badge Status của bạn *@
+                <span class="badge badge-status @(request.Status == "Pending" ? "bg-warning text-dark" :
+                                    request.Status == "Approved" ? "bg-success text-white" : "bg-danger text-white")">
                     @request.Status
                 </span>
             </div>
+
             <div class="card-body p-0">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Book</th>
-                            <th>Edition</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in request.Items)
-                        {
+                <div class="table-responsive">
+                    <table class="table table-request mb-0">
+                        <thead>
                             <tr>
-                                <td>@item.BookEdition.Book.Title</td>
-                                <td>@item.BookEdition.Publisher — @item.BookEdition.PublishYear</td>
+                                <th>Book Title</th>
+                                <th>Edition Details</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in request.Items)
+                            {
+                                <tr>
+                                    <td class="fw-bold text-dark">@item.BookEdition.Book.Title</td>
+                                    <td class="small text-muted">
+                                        @item.BookEdition.Publisher
+                                        <span class="badge bg-light text-muted border ms-1">@item.BookEdition.PublishYear</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
+            @* Logic hiển thị lý do từ chối *@
             @if (request.Status == "Rejected" && !string.IsNullOrEmpty(request.RejectionReason))
             {
-                <div class="card-footer bg-danger bg-opacity-10">
-                    <small class="text-danger">
-                        ❌ <strong>Rejected reason:</strong> @request.RejectionReason
-                    </small>
+                <div class="rejection-box">
+                    <div class="d-flex align-items-start gap-2">
+                        <span class="text-danger">❌</span>
+                        <div class="small">
+                            <strong class="text-danger">Rejected reason:</strong>
+                            <span class="text-dark">@request.RejectionReason</span>
+                        </div>
+                    </div>
                 </div>
             }
         </div>

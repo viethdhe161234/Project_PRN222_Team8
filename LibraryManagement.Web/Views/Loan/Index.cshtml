@@ -6,57 +6,61 @@
     var overdueLoans = Model.Where(l => l.IsOverdue).ToList();
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">My Current Loans</h4>
-    <a asp-action="History" class="btn btn-sm btn-outline-secondary">View History</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold" style="color: #131b2e;">My Current Loans</h4>
+    <a asp-action="History" class="btn btn-sm btn-outline-primary fw-bold px-3" style="border-radius: 8px;">View History</a>
 </div>
 
 @if (overdueLoans.Any())
 {
-    <div class="alert alert-danger">
-        ⚠️ <strong>You have @overdueLoans.Count overdue book(s)!</strong>
-        Please return them to the library as soon as possible.
+    <div class="alert alert-danger shadow-sm border-0 d-flex align-items-center" style="border-radius: 12px;">
+        <span class="me-2">⚠️</span>
+        <div>
+            <strong>You have @overdueLoans.Count overdue book(s)!</strong>
+            Please return them to the library as soon as possible.
+        </div>
     </div>
 }
 
 @if (!Model.Any())
 {
-    <div class="alert alert-info">You have no active loans at the moment.</div>
+    <div class="alert alert-info border-0 shadow-sm" style="border-radius: 12px;">You have no active loans at the moment.</div>
 }
 else
 {
     <div class="row g-3">
         @foreach (var loan in Model)
         {
-            var daysLeft = (loan.DueDate - DateTime.Now).Days;
-            var borderClass = loan.IsOverdue ? "border-danger" : daysLeft <= 3 ? "border-warning" : "border-success";
-
             <div class="col-md-6">
-                <div class="card h-100 border-2 @borderClass">
-                    <div class="card-body">
-                        <h6 class="card-title mb-1">@loan.BookCopy?.BookEdition?.Book?.Title</h6>
-                        <p class="text-muted small mb-3">
+                @* Logic borderClass của bạn giữ nguyên 100% *@
+                <div class="card h-100 border-2 @(loan.IsOverdue ? "border-danger" : (loan.DueDate - DateTime.Now).Days <= 3 ? "border-warning" : "border-success") shadow-sm" style="border-radius:15px; background: #fff;">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold mb-1" style="color: #1e293b;">@loan.BookCopy?.BookEdition?.Book?.Title</h6>
+                        <p class="text-muted small mb-4">
                             @loan.BookCopy?.BookEdition?.Publisher (@loan.BookCopy?.BookEdition?.PublishYear)
                         </p>
+
                         <div class="d-flex justify-content-between align-items-end">
                             <div>
-                                <small class="text-muted d-block">Borrowed: @loan.BorrowDate.ToString("dd/MM/yyyy")</small>
-                                <small class="@(loan.IsOverdue ? "text-danger fw-bold" : "text-muted") d-block">
+                                <small class="text-muted d-block" style="font-size: 0.75rem;">Borrowed: @loan.BorrowDate.ToString("dd/MM/yyyy")</small>
+                                <small class="@(loan.IsOverdue ? "text-danger fw-bold" : "text-muted") d-block" style="font-size: 0.75rem;">
                                     Due: @loan.DueDate.ToString("dd/MM/yyyy")
                                 </small>
                             </div>
-                            <div>
+
+                            @* Logic Badge giữ nguyên các phép tính DateTime của bạn *@
+                            <div class="text-end">
                                 @if (loan.IsOverdue)
                                 {
-                                    <span class="badge bg-danger">Overdue @loan.OverdueDays day(s)</span>
+                                    <span class="badge bg-danger shadow-sm px-3 py-2" style="border-radius: 8px;">Overdue @loan.OverdueDays day(s)</span>
                                 }
-                                else if (daysLeft <= 3)
+                                else if ((loan.DueDate - DateTime.Now).Days <= 3)
                                 {
-                                    <span class="badge bg-warning text-dark">Due in @daysLeft day(s)</span>
+                                    <span class="badge bg-warning text-dark shadow-sm px-3 py-2" style="border-radius: 8px;">Due in @((loan.DueDate - DateTime.Now).Days) day(s)</span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-success">@daysLeft day(s) left</span>
+                                    <span class="badge bg-success shadow-sm px-3 py-2" style="border-radius: 8px;">@((loan.DueDate - DateTime.Now).Days) day(s) left</span>
                                 }
                             </div>
                         </div>

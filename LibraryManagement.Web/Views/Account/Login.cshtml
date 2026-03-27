@@ -1,34 +1,119 @@
 ﻿@model LibraryManagement.Web.Models.LoginViewModel
 
-<h2>Login</h2>
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
+@{
+    ViewData["Title"] = "Login";
 }
-<form asp-action="Login" method="post">
-    
-    <div>
-        <label>Username</label>
-        <input asp-for="Username" />
-        <span asp-validation-for="Username"></span>
+
+<style>
+    .auth-card {
+        border: none;
+        border-radius: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        background: #ffffff;
+        overflow: hidden;
+    }
+
+    .auth-header {
+        background: #f8fafc;
+        padding: 2.5rem 2rem 1rem;
+        text-align: center;
+    }
+
+    .auth-body {
+        padding: 1rem 2.5rem 2.5rem;
+    }
+
+    .form-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .form-control {
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s;
+    }
+
+        .form-control:focus {
+            border-color: #3525cd;
+            box-shadow: 0 0 0 4px rgba(53, 37, 205, 0.1);
+        }
+
+    .btn-auth {
+        background-color: #3525cd;
+        border: none;
+        border-radius: 0.75rem;
+        padding: 0.8rem;
+        font-weight: 700;
+        transition: all 0.2s;
+    }
+
+        .btn-auth:hover {
+            background-color: #2a1da8;
+            transform: translateY(-1px);
+        }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+
+            @* Hiển thị thông báo thành công (ví dụ sau khi Reset Password xong) *@
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success border-0 shadow-sm mb-4" style="border-radius: 12px;">
+                    <span class="material-symbols-outlined align-middle fs-5 me-1">check_circle</span>
+                    @TempData["Success"]
+                </div>
+            }
+
+            <div class="card auth-card">
+                <div class="auth-header">
+                    <div class="mb-3 text-primary">
+                        <span class="material-symbols-outlined fs-1">lock_person</span>
+                    </div>
+                    <h3 class="fw-800 font-headline mb-1">Welcome Back</h3>
+                    <p class="text-muted small mb-0">Please enter your details to sign in.</p>
+                </div>
+
+                <div class="auth-body">
+                    <form asp-action="Login" method="post">
+
+                        <div class="mb-3">
+                            <label asp-for="Username" class="form-label">Username</label>
+                            <input asp-for="Username" class="form-control" placeholder="Enter username" />
+                            <span asp-validation-for="Username" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label asp-for="Password" class="form-label">Password</label>
+                                <a asp-action="ForgotPassword" class="text-muted small text-decoration-none mb-2">Forgot?</a>
+                            </div>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="••••••••" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        @* Hiển thị lỗi tổng quát từ server (ví dụ: Invalid login attempt) *@
+                        <div class="mb-3">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger small fw-bold" })
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-auth w-100 mb-4">Login</button>
+
+                        <div class="text-center border-top pt-3">
+                            <p class="small text-muted mb-0">
+                                Don't have an account?
+                                <a asp-action="Register" class="text-primary fw-bold text-decoration-none">Register here</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div>
-        <label>Password</label>
-        <input asp-for="Password" type="password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-
-    <button type="submit">Login</button>
-
-</form>
-<div>
-    <a asp-action="Register">Don't have an account? Register here</a>
-</div>
-<div class="mt-2 text-end">
-    <a asp-action="ForgotPassword" class="text-muted small">Forgot password?</a>
-</div>
-
-<div>
-    @Html.ValidationSummary()
 </div>

@@ -1,93 +1,200 @@
 ﻿@model LibraryManagement.Domain.Entities.Book
+@using Microsoft.AspNetCore.Http
 
 @{
     Layout = "_Layout";
     ViewData["Title"] = Model.Title;
 }
 
-<div class="row">
-    <!-- Cover -->
-    <div class="col-md-3">
-        @if (!string.IsNullOrEmpty(Model.CoverImage))
-        {
-            <img src="@Model.CoverImage" class="img-fluid rounded shadow" alt="@Model.Title" />
-        }
-        else
-        {
-            <div style="height:300px; background:#e5e7eb;
-                        display:flex; align-items:center;
-                        justify-content:center; color:#9ca3af;">
-                No image
-            </div>
-        }
-    </div>
+<style>
+    .detail-container {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
 
-    <!-- Info -->
-    <div class="col-md-9">
-        <h3>@Model.Title</h3>
-        <p class="text-muted">
-            <strong>Authors:</strong>
-            @string.Join(", ", Model.BookAuthors.Select(ba => ba.Author.Name))
-        </p>
-        <p>
-            @foreach (var bc in Model.BookCategories)
-            {
-                <span class="badge bg-secondary me-1">@bc.Category.Name</span>
-            }
-        </p>
-        <p>@Model.Description</p>
+    .book-detail-cover {
+        border-radius: 1rem;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        transition: transform 0.3s ease;
+    }
 
-        <hr />
-
-        <!-- Editions -->
-        <h5>Available Editions</h5>
-        @if (!Model.Editions.Any())
-        {
-            <p class="text-muted">No editions available.</p>
+        .book-detail-cover:hover {
+            transform: scale(1.02);
         }
-        else
-        {
-            <div class="row g-3">
-                @foreach (var edition in Model.Editions)
+
+    .badge-detail {
+        background: #f1f5f9;
+        color: #475569;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .edition-card {
+        border: 1px solid #f1f5f9;
+        border-radius: 1rem;
+        transition: all 0.2s ease;
+        background: #fafafa;
+    }
+
+        .edition-card:hover {
+            border-color: #3525cd;
+            background: white;
+            box-shadow: 0 5px 15px rgba(53, 37, 205, 0.05);
+        }
+
+    .availability-dot {
+        height: 8px;
+        width: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .description-text {
+        line-height: 1.8;
+        color: #475569;
+        font-size: 1.05rem;
+    }
+
+    .btn-cart {
+        background-color: #3525cd;
+        color: white;
+        border: none;
+        padding: 0.6rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+        .btn-cart:hover {
+            background-color: #2a1da8;
+            transform: translateY(-2px);
+        }
+</style>
+
+<div class="detail-container mb-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item"><a asp-action="Books" class="text-decoration-none">Catalog</a></li>
+            <li class="breadcrumb-item active">@Model.Title</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <div class="col-lg-4">
+            <div class="position-sticky" style="top: 100px;">
+                @if (!string.IsNullOrEmpty(Model.CoverImage))
                 {
-                    var availableCopies = edition.Copies.Count(c => c.IsAvailable);
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h6>@edition.Publisher — @edition.PublishYear</h6>
-                                <p class="text-muted small mb-2">
-                                    Available: @availableCopies / @edition.Copies.Count()
+                    <img src="@Model.CoverImage" class="img-fluid book-detail-cover" alt="@Model.Title" />
+                }
+                else
+                {
+                    <div class="rounded bg-light d-flex flex-column align-items-center justify-content-center shadow-sm" style="height:450px; color:#94a3b8;">
+                        <span class="material-symbols-outlined display-1">image_not_supported</span>
+                        <p class="mt-3 fw-medium">No Cover Illustration</p>
+                    </div>
+                }
+
+                <div class="mt-4 d-flex flex-wrap gap-2">
+                    @foreach (var bc in Model.BookCategories)
+                    {
+                        <span class="badge-detail"><span class="material-symbols-outlined fs-6 align-middle me-1">label</span>@bc.Category.Name</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <h1 class="font-headline fw-800 text-dark mb-2">@Model.Title</h1>
+            <p class="fs-5 text-indigo fw-bold mb-4" style="color: #3525cd;">
+                <span class="text-muted fw-normal small">by</span>
+                @string.Join(", ", Model.BookAuthors.Select(ba => ba.Author.Name))
+            </p>
+
+            <div class="mb-5">
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">description</span> Synopsis
+                </h5>
+                <div class="description-text">
+                    @Model.Description
+                </div>
+            </div>
+
+            <hr class="my-5 opacity-50" />
+
+            <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined text-primary">library_books</span> Select Edition to Borrow
+            </h5>
+
+            @if (!Model.Editions.Any())
+            {
+                <div class="alert alert-light border d-flex align-items-center gap-3 p-4">
+                    <span class="material-symbols-outlined text-warning fs-1">info</span>
+                    <div>
+                        <h6 class="mb-0 fw-bold">No editions available</h6>
+                        <p class="small text-muted mb-0">We currently don't have any physical copies for this title in our catalog.</p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row g-3">
+                    @foreach (var edition in Model.Editions)
+                    {
+                        var availableCopies = edition.Copies.Count(c => c.IsAvailable);
+                        var totalCopies = edition.Copies.Count();
+
+                        <div class="col-md-6">
+                            <div class="card edition-card h-100 p-3 shadow-none">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="fw-bold mb-0">@edition.Publisher</h6>
+                                        <p class="text-muted small mb-0">Published: @edition.PublishYear</p>
+                                    </div>
+                                    <span class="badge @(availableCopies > 0 ? "text-success bg-success-subtle" : "text-danger bg-danger-subtle") rounded-pill px-3">
+                                        <span class="availability-dot @(availableCopies > 0 ? "bg-success" : "bg-danger")"></span>
+                                        @(availableCopies > 0 ? "Available" : "Out of Stock")
+                                    </span>
+                                </div>
+
+                                <p class="small text-muted mb-3">
+                                    <strong>@availableCopies</strong> of <strong>@totalCopies</strong> copies ready to borrow.
                                 </p>
+
                                 @if (availableCopies > 0)
                                 {
                                     @if (Context.Session.GetString("Username") != null)
                                     {
                                         <form asp-controller="Cart" asp-action="Add" method="post">
                                             <input type="hidden" name="editionId" value="@edition.Id" />
-                                            <button type="submit" class="btn btn-primary btn-sm w-100">
-                                                + Add to Cart
+                                            <button type="submit" class="btn btn-cart w-100 d-flex align-items-center justify-content-center gap-2">
+                                                <span class="material-symbols-outlined fs-5">add_shopping_cart</span> Add to Request
                                             </button>
                                         </form>
                                     }
                                     else
                                     {
-                                        <a asp-controller="Account" asp-action="Login"
-                                           class="btn btn-outline-primary btn-sm w-100">
+                                        <a asp-controller="Account" asp-action="Login" class="btn btn-outline-primary w-100 fw-bold rounded-3">
                                             Login to Borrow
                                         </a>
                                     }
                                 }
                                 else
                                 {
-                                    <button class="btn btn-secondary btn-sm w-100" disabled>
+                                    <button class="btn btn-light w-100 text-muted" disabled>
                                         Not Available
                                     </button>
                                 }
                             </div>
                         </div>
-                    </div>
-                }
-            </div>
-        }
+                    }
+                </div>
+            }
+        </div>
     </div>
 </div>

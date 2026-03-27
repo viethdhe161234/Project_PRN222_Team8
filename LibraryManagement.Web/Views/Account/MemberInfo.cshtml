@@ -4,37 +4,106 @@
     ViewData["Title"] = "Complete Your Profile";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <h2 class="mb-2">Complete Your Profile</h2>
-        <p class="text-muted mb-4">Please fill in your personal information to finish registration.</p>
+<style>
+    .info-card {
+        border: none;
+        border-radius: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        background: #ffffff;
+        overflow: hidden;
+    }
 
-        <form asp-action="MemberInfo" method="post">
-            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+    .info-header {
+        background: #f8fafc;
+        padding: 2.5rem 2rem 1rem;
+        text-align: center;
+    }
 
-            <div class="mb-3">
-                <label asp-for="FullName" class="form-label"></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
+    .info-body {
+        padding: 1rem 2.5rem 2.5rem;
+    }
+
+    .form-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .form-control {
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s;
+    }
+
+        .form-control:focus {
+            border-color: #3525cd;
+            box-shadow: 0 0 0 4px rgba(53, 37, 205, 0.1);
+        }
+
+    .btn-complete {
+        background-color: #3525cd;
+        border: none;
+        border-radius: 0.75rem;
+        padding: 0.8rem;
+        font-weight: 700;
+        transition: all 0.2s;
+    }
+
+        .btn-complete:hover {
+            background-color: #2a1da8;
+            transform: translateY(-1px);
+        }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card info-card">
+                <div class="info-header">
+                    <div class="mb-3 text-primary">
+                        <span class="material-symbols-outlined fs-1">contact_page</span>
+                    </div>
+                    <h3 class="fw-800 font-headline mb-1">One Last Step!</h3>
+                    <p class="text-muted small mb-0">Please fill in your personal details to finish.</p>
+                </div>
+
+                <div class="info-body">
+                    <form asp-action="MemberInfo" method="post">
+                        @* Giữ nguyên logic validation summary *@
+                        <div asp-validation-summary="All" class="text-danger small mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="FullName" class="form-label"></label>
+                            <input asp-for="FullName" class="form-control" placeholder="Enter your full name" />
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Phone" class="form-label"></label>
+                            <input asp-for="Phone" class="form-control" placeholder="e.g. 0901234567" />
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Address" class="form-label"></label>
+                            <input asp-for="Address" class="form-control" placeholder="Your residential address" />
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-complete w-100">
+                            Complete Registration
+                        </button>
+                    </form>
+                </div>
             </div>
-
-            <div class="mb-3">
-                <label asp-for="Phone" class="form-label"></label>
-                <input asp-for="Phone" class="form-control" />
-                <span asp-validation-for="Phone" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Address" class="form-label"></label>
-                <input asp-for="Address" class="form-control" />
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100">Complete Registration</button>
-        </form>
+        </div>
     </div>
 </div>
 
 @section Scripts {
+    @* Giữ nguyên script validation của bạn *@
     @await Html.PartialAsync("_ValidationScriptsPartial")
 }

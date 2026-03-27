@@ -5,96 +5,185 @@
     ViewData["Title"] = "My Profile";
 }
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show">
-        @TempData["Success"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-}
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show">
-        @TempData["Error"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-}
+<style>
+    .profile-card {
+        border: none;
+        border-radius: 1.25rem;
+        background: #ffffff;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        height: 100%;
+    }
 
-<h4 class="mb-4">My Profile</h4>
+        .profile-card .card-header {
+            background: transparent;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 1.5rem;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            color: #131b2e;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .profile-card .card-body {
+            padding: 1.5rem;
+        }
+
+    .form-label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s;
+    }
+
+        .form-control:focus {
+            border-color: #3525cd;
+            box-shadow: 0 0 0 4px rgba(53, 37, 205, 0.1);
+        }
+
+    .btn-update {
+        background-color: #3525cd;
+        color: white;
+        border: none;
+        border-radius: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        font-weight: 700;
+        width: 100%;
+        transition: all 0.2s;
+    }
+
+        .btn-update:hover {
+            background-color: #2a1da8;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+    .alert-custom {
+        border: none;
+        border-radius: 1rem;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+    }
+</style>
+
+<div class="mb-4">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-custom alert-dismissible fade show shadow-sm d-flex align-items-center gap-3">
+            <span class="material-symbols-outlined">check_circle</span>
+            <div>@TempData["Success"]</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-custom alert-dismissible fade show shadow-sm d-flex align-items-center gap-3">
+            <span class="material-symbols-outlined">error</span>
+            <div>@TempData["Error"]</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+</div>
+
+<header class="mb-5">
+    <h3 class="font-headline fw-800 text-dark mb-1">Account Settings</h3>
+    <p class="text-muted mb-0">Manage your personal information and security preferences.</p>
+</header>
 
 <div class="row g-4">
-
-    <!-- Account Info -->
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">Account Information</div>
+        <div class="card profile-card">
+            <div class="card-header">
+                <span class="material-symbols-outlined text-primary">account_circle</span>
+                Account Credentials
+            </div>
             <div class="card-body">
                 <form asp-action="UpdateAccount" method="post">
                     <div class="mb-3">
                         <label class="form-label">Username</label>
-                        <input name="NewUsername" value="@Model.Username"
-                               class="form-control" required />
+                        <input name="NewUsername" value="@Model.Username" class="form-control" required />
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input name="NewEmail" type="email" value="@Model.Email"
-                               class="form-control" required />
+                    <div class="mb-4">
+                        <label class="form-label">Email Address</label>
+                        <input name="NewEmail" type="email" value="@Model.Email" class="form-control" required />
                     </div>
-                    <button type="submit" class="btn btn-primary">Update Account</button>
+                    <button type="submit" class="btn btn-update">Update Credentials</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Personal Info -->
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">Personal Information</div>
+        <div class="card profile-card">
+            <div class="card-header">
+                <span class="material-symbols-outlined text-primary">badge</span>
+                Personal Details
+            </div>
             <div class="card-body">
                 <form asp-action="UpdateInfo" method="post">
                     <div class="mb-3">
                         <label asp-for="FullName" class="form-label"></label>
-                        <input asp-for="FullName" class="form-control" />
-                        <span asp-validation-for="FullName" class="text-danger"></span>
+                        <input asp-for="FullName" class="form-control" placeholder="Your full name" />
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
                     </div>
                     <div class="mb-3">
                         <label asp-for="Phone" class="form-label"></label>
-                        <input asp-for="Phone" class="form-control" />
+                        <input asp-for="Phone" class="form-control" placeholder="Phone number" />
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label asp-for="Address" class="form-label"></label>
-                        <input asp-for="Address" class="form-control" />
+                        <input asp-for="Address" class="form-control" placeholder="Full address" />
                     </div>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-update">Save Changes</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Change Password -->
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">Change Password</div>
+    <div class="col-lg-6">
+        <div class="card profile-card border-top border-primary border-4">
+            <div class="card-header">
+                <span class="material-symbols-outlined text-primary">lock_reset</span>
+                Security & Password
+            </div>
             <div class="card-body">
                 <form asp-action="ChangePassword" method="post">
                     <div class="mb-3">
                         <label class="form-label">Current Password</label>
                         <input name="CurrentPassword" type="password" class="form-control" required />
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">New Password</label>
-                        <input name="NewPassword" type="password" class="form-control" required />
+                    <div class="row g-3 mb-4">
+                        <div class="col-sm-6">
+                            <label class="form-label">New Password</label>
+                            <input name="NewPassword" type="password" class="form-control" required />
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Confirm New</label>
+                            <input name="ConfirmNewPassword" type="password" class="form-control" required />
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Confirm New Password</label>
-                        <input name="ConfirmNewPassword" type="password" class="form-control" required />
-                    </div>
-                    <button type="submit" class="btn btn-primary">Change Password</button>
+                    <button type="submit" class="btn btn-update">Update Password</button>
                 </form>
             </div>
         </div>
     </div>
 
+    <div class="col-lg-6">
+        <div class="h-100 d-flex flex-column justify-content-center p-4 rounded-4 bg-light-subtle border border-dashed border-secondary-subtle">
+            <h6 class="fw-bold mb-2">Privacy Note</h6>
+            <p class="small text-muted mb-0">Your data is stored securely in our library's atelier system. We never share your personal information with third parties.</p>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
