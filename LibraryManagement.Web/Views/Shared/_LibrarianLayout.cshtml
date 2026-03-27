@@ -9,136 +9,174 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Librarian Panel</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
     <style>
-        body {
-            min-height: 100vh;
-            background-color: #f8f9fa;
+        :root {
+            --sidebar-width: 260px;
+            --primary-dark: #0f172a;
+            --accent-blue: #3b82f6;
         }
 
-        .sidebar {
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
             min-height: 100vh;
-            width: 250px;
-            background-color: #0f4c75;
+        }
+
+        /* Sidebar hiện đại */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--primary-dark);
+            height: 100vh;
             position: fixed;
             top: 0;
             left: 0;
-            z-index: 100;
-            padding-top: 20px;
+            z-index: 1000;
+            transition: all 0.3s;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.05);
         }
 
         .sidebar-brand {
+            padding: 24px;
+            display: flex;
+            align-items: center;
             color: #fff;
-            font-size: 1.2rem;
-            font-weight: bold;
-            padding: 10px 20px 20px;
-            border-bottom: 1px solid #1b6ca8;
-            display: block;
             text-decoration: none;
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: -0.5px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-            .sidebar-brand:hover {
-                color: #b8d4e8;
-            }
-
-        .sidebar .nav-link {
-            color: #b8d4e8;
-            padding: 10px 20px;
-        }
-
-            .sidebar .nav-link:hover {
-                color: #fff;
-                background-color: #1b6ca8;
-            }
-
-            .sidebar .nav-link.active {
-                color: #fff;
-                background-color: #1976d2;
-            }
-
-        .sidebar .nav-section {
-            color: #7bafd4;
-            font-size: 0.75rem;
+        .nav-section {
+            padding: 24px 24px 8px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #64748b;
             text-transform: uppercase;
-            padding: 15px 20px 5px;
             letter-spacing: 1px;
         }
 
+        .nav-link {
+            padding: 12px 24px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+            .nav-link:hover {
+                color: #fff;
+                background: rgba(255,255,255,0.05);
+            }
+
+            /* Logic Active của bạn giữ nguyên */
+            .nav-link.active {
+                color: #fff;
+                background: var(--accent-blue);
+                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            }
+
+            .nav-link .material-symbols-outlined {
+                font-size: 20px;
+            }
+
+        /* Topbar sạch sẽ */
         .main-content {
-            margin-left: 250px;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
         }
 
         .topbar {
-            background-color: #fff;
-            border-bottom: 1px solid #dee2e6;
-            padding: 12px 24px;
+            height: 70px;
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0 32px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 999;
         }
 
-            .topbar .page-title {
-                font-size: 1.1rem;
-                font-weight: 600;
-                margin: 0;
-                color: #212529;
-            }
+        .page-title {
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
 
         .content-area {
-            padding: 24px;
+            padding: 32px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-left: 16px;
+            border-left: 1px solid #e2e8f0;
         }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar -->
     <div class="sidebar">
         <a class="sidebar-brand" asp-controller="Librarian" asp-action="Dashboard">
-            📚 Librarian Panel
+            <span class="material-symbols-outlined me-2 text-primary">auto_stories</span>
+            <span>LIBRARIAN</span>
         </a>
 
-        <ul class="nav flex-column mt-2">
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")"
-                   asp-controller="Librarian" asp-action="Dashboard">
-                    🏠 Dashboard
-                </a>
-            </li>
+        <div class="nav flex-column mt-3">
+            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")"
+               asp-controller="Librarian" asp-action="Dashboard">
+                <span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
 
-            <li><span class="nav-section">Borrow Management</span></li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "PendingRequests" ? "active" : "")"
-                   asp-controller="Librarian" asp-action="PendingRequests">
-                    📋 Pending Requests
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "ActiveLoans" ? "active" : "")"
-                   asp-controller="Librarian" asp-action="ActiveLoans">
-                    📖 Active Loans
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "OverdueLoans" ? "active" : "")"
-                   asp-controller="Librarian" asp-action="OverdueLoans">
-                    ⚠️ Overdue Loans
-                    @if (ViewBag.OverdueCount != null && ViewBag.OverdueCount > 0)
-                    {
-                        <span class="badge bg-danger ms-1">@ViewBag.OverdueCount</span>
-                    }
-                </a>
-            </li>
-        </ul>
+            <div class="nav-section">Borrow Management</div>
+
+            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "PendingRequests" ? "active" : "")"
+               asp-controller="Librarian" asp-action="PendingRequests">
+                <span class="material-symbols-outlined">pending_actions</span> Pending Requests
+            </a>
+
+            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "ActiveLoans" ? "active" : "")"
+               asp-controller="Librarian" asp-action="ActiveLoans">
+                <span class="material-symbols-outlined">book_2</span> Active Loans
+            </a>
+
+            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "OverdueLoans" ? "active" : "")"
+               asp-controller="Librarian" asp-action="OverdueLoans">
+                <span class="material-symbols-outlined">history_toggle_off</span> Overdue
+                @* Logic hiện Badge của bạn *@
+                @if (ViewBag.OverdueCount != null && ViewBag.OverdueCount > 0)
+                {
+                    <span class="badge rounded-pill bg-danger ms-auto">@ViewBag.OverdueCount</span>
+                }
+            </a>
+        </div>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
         <div class="topbar">
-            <h6 class="page-title">@ViewData["Title"]</h6>
-            <div class="d-flex align-items-center gap-3">
-                <span class="text-muted small">Hello, <strong>@username</strong></span>
-                <a asp-controller="Account" asp-action="Logout"
-                   class="btn btn-sm btn-outline-danger">Logout</a>
+            <h5 class="page-title">@ViewData["Title"]</h5>
+
+            <div class="d-flex align-items-center">
+                <div class="user-profile">
+                    <div class="text-end me-3">
+                        <div class="small fw-800 text-dark">@username</div>
+                        <div class="small text-muted" style="font-size: 0.7rem;">Administrator</div>
+                    </div>
+                    <a asp-controller="Account" asp-action="Logout"
+                       class="btn btn-sm btn-light text-danger fw-bold border">
+                        Logout
+                    </a>
+                </div>
             </div>
         </div>
 

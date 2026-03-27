@@ -5,70 +5,150 @@
     ViewData["Title"] = "Pending Requests";
 }
 
+<style>
+    .request-card {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        transition: transform 0.2s;
+        border-left: 5px solid #3b82f6; /* Màu xanh biểu thị đang chờ xử lý */
+    }
+
+    .request-header {
+        background-color: #fff;
+        padding: 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+        border-top-right-radius: 1rem;
+    }
+
+    .member-avatar {
+        width: 45px;
+        height: 45px;
+        background: #e0e7ff;
+        color: #4338ca;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-weight: 700;
+    }
+
+    .reject-box {
+        max-width: 250px;
+    }
+
+    .table-request thead th {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: #64748b;
+        background-color: #f8fafc;
+        border: none;
+    }
+
+    .table-request td {
+        font-size: 0.85rem;
+        vertical-align: middle;
+        border-color: #f1f5f9;
+    }
+
+    .btn-action {
+        border-radius: 0.5rem;
+        font-weight: 600;
+        padding: 0.4rem 1rem;
+    }
+</style>
+
+<div class="mb-4">
+    <h4 class="fw-800 text-dark mb-1">Pending Borrow Requests</h4>
+    <p class="text-muted small">Review and approve or decline book rental requests from members.</p>
+</div>
+
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success">@TempData["Success"]</div>
+    <div class="alert alert-success border-0 shadow-sm d-flex align-items-center mb-4">
+        <span class="material-symbols-outlined me-2">check_circle</span> @TempData["Success"]
+    </div>
 }
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
-
-<h5 class="mb-3">Pending Borrow Requests</h5>
 
 @if (!Model.Any())
 {
-    <div class="alert alert-info">No pending requests.</div>
+    <div class="text-center py-5">
+        <div class="mb-3 opacity-25">
+            <span class="material-symbols-outlined" style="font-size: 5rem;">inbox</span>
+        </div>
+        <h5 class="text-muted">All caught up!</h5>
+        <p class="text-muted small">There are no pending requests to process.</p>
+    </div>
 }
 else
 {
     foreach (var request in Model)
     {
-        <div class="card mb-3">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span>
-                    <strong>@request.Member.FullName</strong>
-                    — Request #@request.Id
-                    — @request.RequestDate.ToString("dd/MM/yyyy HH:mm")
-                </span>
-                <div class="d-flex gap-2">
+        <div class="card request-card mb-4">
+            <div class="request-header d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="member-avatar">
+                        @request.Member.FullName.Substring(0, 1).ToUpper()
+                    </div>
+                    <div>
+                        <div class="fw-bold text-dark">@request.Member.FullName</div>
+                        <div class="text-muted small">
+                            Request <strong>#@request.Id</strong> • @request.RequestDate.ToString("dd MMM, HH:mm")
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 align-items-center">
                     <form asp-action="Accept" asp-route-id="@request.Id" method="post">
-                        <button type="submit" class="btn btn-sm btn-success"
+                        <button type="submit" class="btn btn-success btn-action d-flex align-items-center gap-1"
                                 onclick="return confirm('Accept this request?')">
-                            ✅ Accept
+                            <span class="material-symbols-outlined fs-6">check</span> Accept
                         </button>
                     </form>
+
                     <form asp-action="Reject" asp-route-id="@request.Id" method="post"
                           onsubmit="return confirm('Reject this request?')">
-                        <div class="input-group input-group-sm">
-                            <input type="text" name="reason" class="form-control form-control-sm"
-                                   placeholder="Reason..." required style="width: 150px;" />
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Reject</button>
+                        <div class="input-group reject-box">
+                            <input type="text" name="reason" class="form-control form-control-sm border-danger-subtle"
+                                   placeholder="Reason for rejection..." required />
+                            <button type="submit" class="btn btn-outline-danger btn-sm px-3 fw-bold">Reject</button>
                         </div>
                     </form>
                 </div>
             </div>
+
             <div class="card-body p-0">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Book</th>
-                            <th>Publisher</th>
-                            <th>Year</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in request.Items)
-                        {
+                <div class="table-responsive">
+                    <table class="table table-request table-hover mb-0">
+                        <thead>
                             <tr>
-                                <td>@item.BookEdition.Book.Title</td>
-                                <td>@item.BookEdition.Publisher</td>
-                                <td>@item.BookEdition.PublishYear</td>
+                                <th class="ps-4">Book Title</th>
+                                <th>Publisher</th>
+                                <th class="text-center">Year</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in request.Items)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-600 text-dark">@item.BookEdition.Book.Title</td>
+                                    <td>@item.BookEdition.Publisher</td>
+                                    <td class="text-center"><span class="badge bg-light text-dark border">@item.BookEdition.PublishYear</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     }
+}
+
+@section Scripts {
+    <script>
+        // Tự động tắt alert sau 5 giây
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+    </script>
 }

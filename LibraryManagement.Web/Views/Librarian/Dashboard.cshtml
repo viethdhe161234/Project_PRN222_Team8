@@ -7,20 +7,28 @@
 }
 
 <style>
+    /* Nâng cấp Stat Cards */
     .stat-card {
         background: #fff;
-        border: 1px solid #e9ecef;
-        border-radius: 0.75rem;
-        padding: 1.25rem;
+        border: none;
+        border-radius: 1rem;
+        padding: 1.5rem;
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 1.25rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
     .stat-icon {
-        width: 46px;
-        height: 46px;
-        border-radius: 0.625rem;
+        width: 54px;
+        height: 54px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -29,145 +37,150 @@
     }
 
     .stat-value {
-        font-size: 1.6rem;
-        font-weight: 700;
+        font-size: 1.75rem;
+        font-weight: 800;
         line-height: 1;
-        color: #212529;
+        color: #1e293b;
+        font-family: 'Inter', sans-serif;
     }
 
     .stat-label {
-        font-size: 0.78rem;
-        color: #6c757d;
-        margin-top: 0.2rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #64748b;
+        margin-top: 0.25rem;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
     }
 
+    /* Nâng cấp Work Cards */
     .work-card {
         background: #fff;
-        border: 1px solid #e9ecef;
-        border-radius: 0.75rem;
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         overflow: hidden;
+        height: 100%;
     }
 
     .work-card-header {
-        padding: 0.875rem 1rem;
-        border-bottom: 1px solid #e9ecef;
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: #f8f9fa;
+        background: #fff;
     }
 
     .work-card-title {
-        font-weight: 700;
-        font-size: 0.9rem;
-        color: #212529;
+        font-weight: 800;
+        font-size: 1rem;
+        color: #1e293b;
         margin: 0;
-    }
-
-    .request-item {
-        padding: 0.875rem 1rem;
-        border-bottom: 1px solid #f1f5f9;
-    }
-
-        .request-item:last-child {
-            border-bottom: none;
-        }
-
-    .loan-item {
-        padding: 0.75rem 1rem;
-        border-bottom: 1px solid #f1f5f9;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 0.75rem;
+        gap: 8px;
     }
 
-        .loan-item:last-child {
-            border-bottom: none;
+    .request-item, .loan-item {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.2s;
+    }
+
+        .request-item:hover, .loan-item:hover {
+            background: #f8fafc;
         }
 
     .empty-state {
-        padding: 2rem 1rem;
+        padding: 3rem 1.5rem;
         text-align: center;
-        color: #6c757d;
-        font-size: 0.875rem;
+        color: #94a3b8;
     }
 </style>
 
-<!-- Header -->
-<div class="d-flex justify-content-between align-items-start mb-4">
-    <div>
-        <h5 class="fw-bold mb-0">Librarian Dashboard</h5>
-        <small class="text-muted">@today.ToString("dddd, dd MMMM yyyy")</small>
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h3 class="fw-800 text-dark mb-0">Librarian Dashboard</h3>
+        <p class="text-muted mb-0">@today.ToString("dddd, dd MMMM yyyy")</p>
+    </div>
+    <div class="col-auto">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success border-0 shadow-sm mb-0 py-2 small">
+                <span class="material-symbols-outlined align-middle fs-6">check_circle</span> @TempData["Success"]
+            </div>
+        }
     </div>
 </div>
 
-<!-- Stat cards: công việc hôm nay -->
-<div class="row g-3 mb-4">
+<div class="row g-4 mb-4">
     <div class="col-6 col-md-3">
-        <div class="stat-card @(Model.PendingRequests > 0 ? "border-warning" : "")">
-            <div class="stat-icon" style="background:#fef3c7;">⏳</div>
+        <div class="stat-card @(Model.PendingRequests > 0 ? "border-start border-4 border-warning" : "")">
+            <div class="stat-icon bg-warning-subtle text-warning">
+                <span class="material-symbols-outlined">pending_actions</span>
+            </div>
             <div>
-                <div class="stat-value @(Model.PendingRequests > 0 ? "text-warning" : "")">
-                    @Model.PendingRequests
-                </div>
-                <div class="stat-label">Needs review</div>
+                <div class="stat-value @(Model.PendingRequests > 0 ? "text-warning" : "")">@Model.PendingRequests</div>
+                <div class="stat-label">Review</div>
             </div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="stat-card @(Model.OverdueLoans > 0 ? "border-danger" : "")">
-            <div class="stat-icon" style="background:#fee2e2;">⚠️</div>
+        <div class="stat-card @(Model.OverdueLoans > 0 ? "border-start border-4 border-danger" : "")">
+            <div class="stat-icon bg-danger-subtle text-danger">
+                <span class="material-symbols-outlined">event_busy</span>
+            </div>
             <div>
-                <div class="stat-value @(Model.OverdueLoans > 0 ? "text-danger" : "")">
-                    @Model.OverdueLoans
-                </div>
+                <div class="stat-value @(Model.OverdueLoans > 0 ? "text-danger" : "")">@Model.OverdueLoans</div>
                 <div class="stat-label">Overdue</div>
             </div>
         </div>
     </div>
     <div class="col-6 col-md-3">
         <div class="stat-card">
-            <div class="stat-icon" style="background:#dbeafe;">📖</div>
+            <div class="stat-icon bg-primary-subtle text-primary">
+                <span class="material-symbols-outlined">book_2</span>
+            </div>
             <div>
                 <div class="stat-value text-primary">@Model.ActiveLoans</div>
-                <div class="stat-label">Active loans</div>
+                <div class="stat-label">Active</div>
             </div>
         </div>
     </div>
     <div class="col-6 col-md-3">
         <div class="stat-card">
-            <div class="stat-icon" style="background:#dcfce7;">✅</div>
+            <div class="stat-icon bg-success-subtle text-success">
+                <span class="material-symbols-outlined">library_add_check</span>
+            </div>
             <div>
                 <div class="stat-value text-success">@Model.AvailableCopies</div>
-                <div class="stat-label">Available copies</div>
+                <div class="stat-label">Available</div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Main work area -->
-<div class="row g-3">
-
-    <!-- Cột trái: Pending requests cần xử lý -->
+<div class="row g-4">
     <div class="col-lg-7">
         <div class="work-card">
             <div class="work-card-header">
-                <span class="work-card-title">
-                    📋 Pending Borrow Requests
+                <h6 class="work-card-title">
+                    <span class="material-symbols-outlined text-warning">assignment</span>
+                    Pending Borrow Requests
                     @if (Model.PendingRequests > 0)
                     {
-                        <span class="badge bg-warning text-dark ms-1">@Model.PendingRequests</span>
+                        <span class="badge rounded-pill bg-warning text-dark ms-2">@Model.PendingRequests</span>
                     }
-                </span>
-                <a asp-action="PendingRequests" class="btn btn-sm btn-outline-secondary"
-                   style="font-size:0.75rem;">View all</a>
+                </h6>
+                <a asp-action="PendingRequests" class="btn btn-sm btn-light border fw-bold text-muted px-3">View All</a>
             </div>
 
             @if (!Model.RecentRequests.Any())
             {
                 <div class="empty-state">
-                    ✅ No pending requests — you're all caught up!
+                    <span class="material-symbols-outlined fs-1 opacity-25">task_alt</span>
+                    <p class="mt-2 mb-0">You're all caught up! No requests pending.</p>
                 </div>
             }
             else
@@ -175,32 +188,30 @@
                 foreach (var req in Model.RecentRequests)
                 {
                     <div class="request-item">
-                        <div class="d-flex justify-content-between align-items-start gap-2">
-                            <div class="flex-grow-1 min-w-0">
-                                <div class="fw-semibold" style="font-size:0.9rem;">
-                                    @req.Member?.FullName
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <div class="fw-800 text-dark">@req.Member?.FullName</div>
+                                <div class="text-muted small">
+                                    <span class="material-symbols-outlined fs-6 align-middle">schedule</span>
+                                    @req.RequestDate.ToString("HH:mm") — @req.RequestDate.ToString("dd MMM")
                                 </div>
-                                <div class="text-muted" style="font-size:0.78rem;">
-                                    Requested @req.RequestDate.ToString("dd/MM/yyyy HH:mm")
-                                </div>
-                                <div class="mt-1 d-flex flex-wrap gap-1">
+                                <div class="mt-2 d-flex flex-wrap gap-1">
                                     @foreach (var item in req.Items)
                                     {
-                                        <span class="badge bg-light text-dark border"
-                                              style="font-size:0.72rem;font-weight:400;">
-                                            @(item.BookEdition?.Book?.Title ?? "—")
+                                        <span class="badge bg-light text-dark border-0 px-2 py-1" style="font-weight:500;">
+                                            • @(item.BookEdition?.Book?.Title ?? "—")
                                         </span>
                                     }
                                 </div>
                             </div>
-                            <div class="d-flex gap-1 flex-shrink-0">
+                            <div class="d-flex gap-2">
                                 <form asp-action="Accept" asp-route-id="@req.Id" method="post"
                                       onsubmit="return confirm('Accept request from @req.Member?.FullName?')">
-                                    <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                                    <button type="submit" class="btn btn-sm btn-primary fw-bold px-3">Accept</button>
                                 </form>
                                 <form asp-action="Reject" asp-route-id="@req.Id" method="post"
                                       onsubmit="return confirm('Reject this request?')">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Reject</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger px-3">Reject</button>
                                 </form>
                             </div>
                         </div>
@@ -210,107 +221,61 @@
         </div>
     </div>
 
-    <!-- Cột phải: Overdue + Due soon -->
-    <div class="col-lg-5 d-flex flex-column gap-3">
-
-        <!-- Overdue loans -->
-        <div class="work-card">
-            <div class="work-card-header">
-                <span class="work-card-title">
-                    ⚠️ Overdue Loans
-                    @if (Model.OverdueLoans > 0)
+    <div class="col-lg-5">
+        <div class="d-flex flex-column gap-4">
+            <div class="work-card border-top border-4 border-danger">
+                <div class="work-card-header">
+                    <h6 class="work-card-title text-danger">
+                        <span class="material-symbols-outlined">notification_important</span> Overdue
+                    </h6>
+                    <a asp-action="OverdueLoans" class="text-danger small fw-bold text-decoration-none">View All</a>
+                </div>
+                @if (!Model.OverdueLoansList.Any())
+                {
+                    <div class="empty-state py-4">No overdue loans 🎉</div>
+                }
+                else
+                {
+                    foreach (var loan in Model.OverdueLoansList.Take(3))
                     {
-                        <span class="badge bg-danger ms-1">@Model.OverdueLoans</span>
-                    }
-                </span>
-                <a asp-action="OverdueLoans" class="btn btn-sm btn-outline-danger"
-                   style="font-size:0.75rem;">View all</a>
-            </div>
-            @if (!Model.OverdueLoansList.Any())
-            {
-                <div class="empty-state">No overdue loans 🎉</div>
-            }
-            else
-            {
-                foreach (var loan in Model.OverdueLoansList.Take(4))
-                {
-                    <div class="loan-item">
-                        <div class="flex-grow-1 min-w-0">
-                            <div class="fw-semibold text-truncate" style="font-size:0.85rem;">
-                                @loan.Member?.FullName
+                        <div class="loan-item">
+                            <div class="min-w-0">
+                                <div class="fw-bold text-dark text-truncate">@loan.Member?.FullName</div>
+                                <div class="text-muted small text-truncate">@loan.BookCopy?.BookEdition?.Book?.Title</div>
                             </div>
-                            <div class="text-truncate" style="font-size:0.78rem;color:#6c757d;">
-                                @loan.BookCopy?.BookEdition?.Book?.Title
-                            </div>
+                            <span class="badge bg-danger-subtle text-danger fw-800">@loan.OverdueDays d</span>
                         </div>
-                        <span class="badge bg-danger flex-shrink-0">
-                            @loan.OverdueDays d overdue
-                        </span>
-                    </div>
+                    }
                 }
-                @if (Model.OverdueLoans > 4)
-                {
-                    <div style="padding:0.5rem 1rem;font-size:0.78rem;color:#6c757d;text-align:center;">
-                        +@(Model.OverdueLoans - 4) more —
-                        <a asp-action="OverdueLoans" class="text-danger fw-semibold">see all</a>
-                    </div>
-                }
-            }
-        </div>
+            </div>
 
-        <!-- Due soon (trong 3 ngày tới) -->
-        <div class="work-card">
-            <div class="work-card-header">
-                <span class="work-card-title">
-                    🔔 Due Soon
-                    @if (Model.DueSoonLoans.Any())
+            <div class="work-card border-top border-4 border-primary">
+                <div class="work-card-header">
+                    <h6 class="work-card-title text-primary">
+                        <span class="material-symbols-outlined">alarm</span> Due Soon
+                    </h6>
+                </div>
+                @if (!Model.DueSoonLoans.Any())
+                {
+                    <div class="empty-state py-4">Nothing due in 3 days.</div>
+                }
+                else
+                {
+                    foreach (var loan in Model.DueSoonLoans.Take(3))
                     {
-                        <span class="badge bg-warning text-dark ms-1">@Model.DueSoonLoans.Count</span>
-                    }
-                </span>
-                <a asp-action="ActiveLoans" class="btn btn-sm btn-outline-secondary"
-                   style="font-size:0.75rem;">Active loans</a>
-            </div>
-            @if (!Model.DueSoonLoans.Any())
-            {
-                <div class="empty-state">No loans due in the next 3 days</div>
-            }
-            else
-            {
-                foreach (var loan in Model.DueSoonLoans.Take(4))
-                {
-                    var daysLeft = (loan.DueDate - DateTime.Now).Days;
-                    <div class="loan-item">
-                        <div class="flex-grow-1 min-w-0">
-                            <div class="fw-semibold text-truncate" style="font-size:0.85rem;">
-                                @loan.Member?.FullName
+                        var daysLeft = (loan.DueDate - DateTime.Now).Days;
+                        <div class="loan-item">
+                            <div class="min-w-0">
+                                <div class="fw-bold text-dark text-truncate">@loan.Member?.FullName</div>
+                                <div class="text-muted small text-truncate">@loan.BookCopy?.BookEdition?.Book?.Title</div>
                             </div>
-                            <div class="text-truncate" style="font-size:0.78rem;color:#6c757d;">
-                                @loan.BookCopy?.BookEdition?.Book?.Title
-                            </div>
+                            <span class="badge @(daysLeft <= 0 ? "bg-danger" : "bg-primary-subtle text-primary") fw-800">
+                                @(daysLeft <= 0 ? "Today" : $"{daysLeft}d")
+                            </span>
                         </div>
-                        <span class="badge @(daysLeft == 0 ? "bg-danger" : "bg-warning text-dark") flex-shrink-0">
-                            @(daysLeft == 0 ? "Today" : $"{daysLeft}d left")
-                        </span>
-                    </div>
+                    }
                 }
-            }
+            </div>
         </div>
-
     </div>
 </div>
-
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show mt-3">
-        @TempData["Success"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-}
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show mt-3">
-        @TempData["Error"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-}
